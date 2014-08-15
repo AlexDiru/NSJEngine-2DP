@@ -36,7 +36,6 @@ public class NSJEngine implements ApplicationListener {
     private int y = 0;
 
     private int moveDir = -1;
-    private float currentDistanceMoved = 0f;
     private float totalDistanceMoved = 0f;
     private static final float moveDistance = 32f;
 
@@ -105,7 +104,6 @@ public class NSJEngine implements ApplicationListener {
 
             if (totalDistanceMoved == moveDistance) {
                 moveDir = -1;
-                currentDistanceMoved= 0f;
                 totalDistanceMoved = 0f;
             }
         }
