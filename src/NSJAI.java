@@ -14,9 +14,10 @@ public class NSJAI extends NSJCharacter {
     private static final int FireMode_Standard = 0;
     private static final int FireMode_Jitter = 1;
 
+    private static final int AIType_Poke = 2;
     private static final int AIType_Doom = 0;
     private static final int AIType_Doom2 = 1;
-    private static final int MAX_AI_TYPES = 2;
+    private static final int MAX_AI_TYPES = 3;
 
     private static final float MoveDirectionTimer_MAX = 1.5f;
 
@@ -40,6 +41,7 @@ public class NSJAI extends NSJCharacter {
 
     private boolean moveNorth = false, moveSouth = false, moveEast = false, moveWest = false;
     private float moveDirectionTimer = 0;
+    private float moveWaitTime = 0f; //Time to wait  between movements
 
     public NSJAI(int id, float x, float y) {
         if (id == Test) {
@@ -49,7 +51,7 @@ public class NSJAI extends NSJCharacter {
             fireRate = TestFireRate;
         }
 
-        aiType = AIType_Doom;
+        aiType = AIType_Poke;
         speed = 100;
     }
 
@@ -84,23 +86,37 @@ public class NSJAI extends NSJCharacter {
             behaveAsDoom(map, target);
         else if (aiType == AIType_Doom2)
             behaveAsDoom2(map, target);
+        else if (aiType == AIType_Poke)
+            behaveAsPokemon(map);
 
+        return;
+    }
 
-
-        if (fireRateTimer > 0) {
-            fireRateTimer -= Gdx.graphics.getDeltaTime();
+    private void behaveAsPokemon(NSJMap map) {
+        if (moveWaitTime > 0)
+        {
+            moveWaitTime -= Gdx.graphics.getDeltaTime();
             return;
         }
 
-        if (fireMode == FireMode_Standard)
-            map.addEntity(1, new NSJProjectile(NSJProjectile.Fireball, x,y, target.getX(), target.getY(), this));
-
-        if (fireMode == FireMode_Jitter) {
-            NSJPair<Float, Float> jitteredCoords = applyJitter(target.getX(),target.getY(), jitterAmount);
-            map.addEntity(1, new NSJProjectile(NSJProjectile.Fireball,x,y,target.getX() + (random.nextInt(3) - 1), target.getY() + (random.nextInt(3) - 1), this));
+        //Choose random direction to move
+        int moveDir = random.nextInt(4);
+        if (moveDir == 0) {
+            if (canMoveTo(map, x, y + 32))
+                y+=32;
+        } else if (moveDir == 1) {
+            if (canMoveTo(map, x, y - 32))
+                y-=32;
+        } else if (moveDir == 2) {
+            if (canMoveTo(map, x + 32, y))
+                x += 32;
+        } else if (moveDir == 3) {
+            if (canMoveTo(map, x - 32, y))
+                x -= 32;
         }
 
-        fireRateTimer += fireRate;
+        moveWaitTime = 1;
+
     }
 
     private boolean canSee(NSJEntity target, NSJMap map) {
