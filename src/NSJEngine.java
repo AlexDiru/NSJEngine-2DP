@@ -69,18 +69,42 @@ public class NSJEngine implements ApplicationListener {
 
     @Override
     public void render() {
-        if (Gdx.input.isKeyPressed(Input.Keys.A))
-            if (player.canMoveTo(map, player.getX()-1, player.getY()))
-                player.increaseX(-1);
-        if (Gdx.input.isKeyPressed(Input.Keys.D))
-            if (player.canMoveTo(map, player.getX()+1, player.getY()))
-                player.increaseX(1);
-        if (Gdx.input.isKeyPressed(Input.Keys.W))
-            if (player.canMoveTo(map, player.getX(), player.getY()+1))
-                player.increaseY(1);
-        if (Gdx.input.isKeyPressed(Input.Keys.S))
-            if (player.canMoveTo(map, player.getX(), player.getY()-1))
-                player.increaseY(-1);
+
+        if (moveDir == -1) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A))
+                if (player.canMoveTo(map, player.getX()-1, player.getY()))
+                    moveDir = 0;
+            if (Gdx.input.isKeyPressed(Input.Keys.D))
+                if (player.canMoveTo(map, player.getX()+1, player.getY()))
+                    moveDir = 1;
+            if (Gdx.input.isKeyPressed(Input.Keys.W))
+                if (player.canMoveTo(map, player.getX(), player.getY()+1))
+                    moveDir = 2;
+            if (Gdx.input.isKeyPressed(Input.Keys.S))
+                if (player.canMoveTo(map, player.getX(), player.getY()-1))
+                    moveDir = 3;
+
+            distanceMoved = 0;
+        }
+
+        if (distanceMoved < moveDistance) {
+            distanceMoved += Gdx.graphics.getDeltaTime() * 100;
+            if (distanceMoved > moveDistance)
+                distanceMoved = moveDistance;
+
+            if (distanceMoved == moveDistance) {
+                if (moveDir == 0)
+                    player.increaseX(-(int)moveDistance);
+                else if (moveDir == 1)
+                    player.increaseX((int)moveDistance);
+                else if (moveDir == 2)
+                    player.increaseY((int)moveDistance);
+                else
+                    player.increaseY(-(int)moveDistance);
+
+                moveDir = -1;
+            }
+        }
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT_BRACKET) && leftBracketFlag) {
             ((NSJAI)enemy).iterateAITypeDown();
