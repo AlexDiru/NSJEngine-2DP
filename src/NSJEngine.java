@@ -4,8 +4,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -38,7 +36,8 @@ public class NSJEngine implements ApplicationListener {
     private int y = 0;
 
     private int moveDir = -1;
-    private float distanceMoved = 0f;
+    private float currentDistanceMoved = 0f;
+    private float totalDistanceMoved = 0f;
     private static final float moveDistance = 32f;
 
     private Random random = new Random();
@@ -72,37 +71,42 @@ public class NSJEngine implements ApplicationListener {
 
         if (moveDir == -1) {
             if (Gdx.input.isKeyPressed(Input.Keys.A))
-                if (player.canMoveTo(map, player.getX()-1, player.getY()))
+                if (player.canMoveTo(map, player.getX()-moveDistance, player.getY()))
                     moveDir = 0;
             if (Gdx.input.isKeyPressed(Input.Keys.D))
-                if (player.canMoveTo(map, player.getX()+1, player.getY()))
+                if (player.canMoveTo(map, player.getX()+moveDistance, player.getY()))
                     moveDir = 1;
             if (Gdx.input.isKeyPressed(Input.Keys.W))
-                if (player.canMoveTo(map, player.getX(), player.getY()+1))
+                if (player.canMoveTo(map, player.getX(), player.getY()+moveDistance))
                     moveDir = 2;
             if (Gdx.input.isKeyPressed(Input.Keys.S))
-                if (player.canMoveTo(map, player.getX(), player.getY()-1))
+                if (player.canMoveTo(map, player.getX(), player.getY()-moveDistance))
                     moveDir = 3;
 
-            distanceMoved = 0;
+            totalDistanceMoved = 0;
         }
 
-        if (distanceMoved < moveDistance) {
-            distanceMoved += Gdx.graphics.getDeltaTime() * 100;
-            if (distanceMoved > moveDistance)
-                distanceMoved = moveDistance;
+        if (totalDistanceMoved < moveDistance && moveDir != -1) {
+            float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
+            if (totalDistanceMoved + distanceToMove > moveDistance)
+                distanceToMove = moveDistance - totalDistanceMoved;
 
-            if (distanceMoved == moveDistance) {
+
                 if (moveDir == 0)
-                    player.increaseX(-(int)moveDistance);
+                    player.increaseX(-distanceToMove);
                 else if (moveDir == 1)
-                    player.increaseX((int)moveDistance);
+                    player.increaseX(distanceToMove);
                 else if (moveDir == 2)
-                    player.increaseY((int)moveDistance);
+                    player.increaseY(distanceToMove);
                 else
-                    player.increaseY(-(int)moveDistance);
+                    player.increaseY(-distanceToMove);
 
+            totalDistanceMoved += distanceToMove;
+
+            if (totalDistanceMoved == moveDistance) {
                 moveDir = -1;
+                currentDistanceMoved= 0f;
+                totalDistanceMoved = 0f;
             }
         }
 

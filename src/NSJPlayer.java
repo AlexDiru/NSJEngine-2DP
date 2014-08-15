@@ -27,6 +27,12 @@ public class NSJPlayer extends NSJCharacter {
     public void increaseX(int v) {
         x+=v;
     }
+    public void increaseX(float v) {
+        x+=v;
+    }
+    public void increaseY(float v) {
+        y+=v;
+    }
 
     public void increaseY(int v) {
         y+=v;
