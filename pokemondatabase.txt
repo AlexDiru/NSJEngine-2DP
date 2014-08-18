@@ -1,0 +1,28 @@
+//Stats:HP,Attack,Defense,SpAtk,SpDef,Speed
+
+ID:7
+Name:Squirtle
+CatchRate:45
+Evolution:8,Level(16)
+Stats:44,48,65,50,50,43
+Type:Water
+MoveList:
+	Tackle,0
+	Tail Whip,0
+	Bubble,8
+	Water Gun,15
+	Bite,22
+	Withdraw,28
+	Skull Bash,35
+	Hydro Pump,42
+EndMoveList
+TMList:1,5,6,8,9,10,11,12,13,14,17,18,19,20,28,31,32,33,34,40,44,50
+HMList:3,4
+
+ID:8
+Name:Wartortle
+Evolution:9,Level(36)
+
+ID:64
+Name:Kadabra
+Evolution:65,Trade
