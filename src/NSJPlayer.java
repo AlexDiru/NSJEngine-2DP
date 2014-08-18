@@ -8,6 +8,7 @@ import java.util.List;
 
 public class NSJPlayer extends NSJCharacter {
 
+    private TextureRegion current;
     private TextureRegion up, down, left, right;
 
     public NSJPlayer(Texture player, Texture playerPain) {
@@ -21,13 +22,17 @@ public class NSJPlayer extends NSJCharacter {
         this.up = up;
         this.down = down;
         this.left = left;
+
+
         this.right = right;
+
+        current = down;
     }
 
     public void render(SpriteBatch spriteBatch) {
 
         float scaleRatio = (width*(z+1))/width;
-        spriteBatch.draw(up, (Gdx.graphics.getWidth() - width * scaleRatio) /2, (Gdx.graphics.getHeight() - height * scaleRatio) /2);// 0,0,width, height,z+1,z+1,0,0,0,texture.getWidth(), texture.getHeight(),false,false);
+        spriteBatch.draw(current, (Gdx.graphics.getWidth() - width * scaleRatio) /2, (Gdx.graphics.getHeight() - height * scaleRatio) /2);// 0,0,width, height,z+1,z+1,0,0,0,texture.getWidth(), texture.getHeight(),false,false);
     }
 
     public void renderOnGUI(SpriteBatch spriteBatch) {
@@ -35,19 +40,28 @@ public class NSJPlayer extends NSJCharacter {
     }
 
 
-
-    public void increaseX(int v) {
-        x+=v;
-    }
     public void increaseX(float v) {
         x+=v;
+        if (v > 0) {
+            if (!right.isFlipX())
+                right.flip(true, false);
+            current = right;
+        }
+        else
+        {
+            if (right.isFlipX())
+                right.flip(true, false);
+
+            current = left;
+        }
     }
     public void increaseY(float v) {
         y+=v;
-    }
 
-    public void increaseY(int v) {
-        y+=v;
+        if (v > 0)
+            current = up;
+        else
+            current = down;
     }
 
     public int getHeight() {

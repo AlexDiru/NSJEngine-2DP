@@ -53,7 +53,7 @@ public class NSJMap {
         NSJMapTile floorTile = new NSJMapTile(0,-1,-1, NSJMapTile.MapTileType.OPEN);
         NSJMapTile wallTile = new NSJMapTile(9,-1,-1, NSJMapTile.MapTileType.SOLID);
 
-        player.setTextures(npcs[74], npcs[74], npcs[66], npcs[66]);
+        player.setTextures(npcs[74+28], npcs[74], npcs[66+6*28-1+8], npcs[66+6*28-1+8]);
 
 
         this.player = player;

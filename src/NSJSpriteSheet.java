@@ -1,3 +1,4 @@
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -23,6 +24,7 @@ public class NSJSpriteSheet {
                 int ry = regions[y][x].getRegionY() + gapBetweenSpritesY * y;
                 regions[y][x].setRegion(rx, ry, regions[y][x].getRegionWidth(), regions[y][x].getRegionHeight());
                 sprites[y * regions[0].length + x] = new Sprite(regions[y][x]);
+
             }
         }
 
