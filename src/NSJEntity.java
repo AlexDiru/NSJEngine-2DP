@@ -134,4 +134,5 @@ public class NSJEntity {
         clone.destroyed = false;
         return clone;
     }
+
 }

@@ -12,13 +12,16 @@ public class NSJMap {
 
     //Maps layer to objects on that layer
     public HashMap<Integer, List<NSJMapTile>> layerMapTiles = new HashMap<Integer, List<NSJMapTile>>();
+    public HashMap<Integer, List<NSJEntity>> layerMapEntities = new HashMap<Integer, List<NSJEntity>>();
 
     private NSJEntity player;
-    private List<NSJEntity> entities = new ArrayList<NSJEntity>();
 
+
+    private static final int MAX_LAYERS = 10;
 
     //Tileset Map
     private TextureRegion[] textures;
+    private TextureRegion[] npcs; //width = 24
 
 
     private void layerFromTileMap(int layerNum, String tileMap, NSJMapTile[] entityEncoding, int tileSize) {
@@ -42,16 +45,15 @@ public class NSJMap {
     }
 
 
-    public NSJMap(NSJEntity player) {
-        //Texture floor = new Texture("assets/floor.png");
-        //Texture me = new Texture("assets/ship.png");
-       // Texture marcus = new Texture("assets/bullet.png");
-        //Texture churly = new Texture("assets/enemybullet.png");
+    public NSJMap(NSJPlayer player) {
 
-        textures = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/mapsheet.png")),16,16);
+        textures = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/mapsheet.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,0,0);
+        npcs = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/npcsprites.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,2,2);
 
         NSJMapTile floorTile = new NSJMapTile(0,-1,-1, NSJMapTile.MapTileType.OPEN);
         NSJMapTile wallTile = new NSJMapTile(9,-1,-1, NSJMapTile.MapTileType.SOLID);
+
+        player.setTextures(npcs[74], npcs[74], npcs[66], npcs[66]);
 
 
         this.player = player;
@@ -96,14 +98,18 @@ public class NSJMap {
                 " , , , , , ,1,0,0,1,0,0,0,0,0,1\n" +
                 " , , , , , , ,1,0,0,0,0,0,0,0,1\n" +
                 " , , , , , , , ,1,1,1,1,1,1,1, \n",
-                new NSJMapTile[] { floorTile, wallTile },16);
+                new NSJMapTile[] { floorTile, wallTile },NSJEngine.TILE_SIZE);
 
 
 
     }
 
     public void addEntity(int layerNum, NSJEntity entity) {
-        entities.add(entity);
+        //Add to layer map
+        if (layerMapEntities.get(layerNum) == null)
+            layerMapEntities.put(layerNum, new ArrayList<NSJEntity>());
+        layerMapEntities.get(layerNum).add(entity);
+
         entity.setLayer(layerNum);
     }
 
@@ -147,13 +153,31 @@ public class NSJMap {
         float scaleRatio = 0;
         int z = 0;
 
-        for (int layer : layerMapTiles.keySet()) {
-            for (NSJMapTile entity : layerMapTiles.get(layer)) {
-                TextureRegion txt = textures[entity.getTextureId()];
-                spriteBatch.draw(txt.getTexture(), entity.getX() - offsetX - scaleRatio/2, entity.getY() - offsetY - scaleRatio/2, 0,0,16, 16,z+1,z+1,0,txt.getRegionX(),txt.getRegionY(),16,16,false,false);
-                //entity.render(spriteBatch, offsetX, offsetY);
+        //Combine layers
+        /*Integer[] tileLayers = layerMapTiles.keySet().toArray(new Integer[layerMapTiles.keySet().size()]);
+        Integer[] entityLayers =  layerMapEntities.keySet().toArray(new Integer[layerMapEntities.keySet().size()]);
+        int[] layers = NSJArray.merge(tileLayers, entityLayers);*/
+
+        //Renderer
+        for (int layer = 0; layer < MAX_LAYERS; layer++) {
+            if (layerMapTiles.get(layer) != null) {
+                for (NSJMapTile entity : layerMapTiles.get(layer)) {
+                    TextureRegion txt = textures[entity.getTextureId()];
+                    spriteBatch.draw(txt.getTexture(), entity.getX() - offsetX - scaleRatio/2, entity.getY() - offsetY - scaleRatio/2, 0,0,16, 16,z+1,z+1,0,txt.getRegionX(),txt.getRegionY(),16,16,false,false);
+                }
+            }
+
+            if (layerMapEntities.get(layer) != null) {
+                for (NSJEntity entity : layerMapEntities.get(layer)) {
+
+                    if (entity instanceof NSJPlayer)
+                        ((NSJPlayer)entity).render(spriteBatch);
+                    else
+                        entity.render(spriteBatch, offsetX, offsetY);
+                }
             }
         }
+
     }
 
     public List<NSJMapTile> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {

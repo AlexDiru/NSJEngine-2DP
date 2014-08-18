@@ -37,7 +37,8 @@ public class NSJEngine implements ApplicationListener {
 
     private int moveDir = -1;
     private float totalDistanceMoved = 0f;
-    private static final float moveDistance = 32f;
+
+    public static final int TILE_SIZE = 16;
 
     private Random random = new Random();
 
@@ -70,25 +71,25 @@ public class NSJEngine implements ApplicationListener {
 
         if (moveDir == -1) {
             if (Gdx.input.isKeyPressed(Input.Keys.A))
-                if (player.canMoveTo(map, player.getX()-moveDistance, player.getY()))
+                if (player.canMoveTo(map, player.getX()-TILE_SIZE, player.getY()))
                     moveDir = 0;
             if (Gdx.input.isKeyPressed(Input.Keys.D))
-                if (player.canMoveTo(map, player.getX()+moveDistance, player.getY()))
+                if (player.canMoveTo(map, player.getX()+TILE_SIZE, player.getY()))
                     moveDir = 1;
             if (Gdx.input.isKeyPressed(Input.Keys.W))
-                if (player.canMoveTo(map, player.getX(), player.getY()+moveDistance))
+                if (player.canMoveTo(map, player.getX(), player.getY()+TILE_SIZE))
                     moveDir = 2;
             if (Gdx.input.isKeyPressed(Input.Keys.S))
-                if (player.canMoveTo(map, player.getX(), player.getY()-moveDistance))
+                if (player.canMoveTo(map, player.getX(), player.getY()-TILE_SIZE))
                     moveDir = 3;
 
             totalDistanceMoved = 0;
         }
 
-        if (totalDistanceMoved < moveDistance && moveDir != -1) {
+        if (totalDistanceMoved < TILE_SIZE && moveDir != -1) {
             float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
-            if (totalDistanceMoved + distanceToMove > moveDistance)
-                distanceToMove = moveDistance - totalDistanceMoved;
+            if (totalDistanceMoved + distanceToMove > TILE_SIZE)
+                distanceToMove = TILE_SIZE - totalDistanceMoved;
 
 
                 if (moveDir == 0)
@@ -102,7 +103,7 @@ public class NSJEngine implements ApplicationListener {
 
             totalDistanceMoved += distanceToMove;
 
-            if (totalDistanceMoved == moveDistance) {
+            if (totalDistanceMoved == TILE_SIZE) {
                 moveDir = -1;
                 totalDistanceMoved = 0f;
             }
