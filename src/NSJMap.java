@@ -164,6 +164,13 @@ public class NSJMap {
                 for (NSJMapTile entity : layerMapTiles.get(layer)) {
                     TextureRegion txt = textures[entity.getTextureId()];
                     spriteBatch.draw(txt.getTexture(), entity.getX() - offsetX - scaleRatio/2, entity.getY() - offsetY - scaleRatio/2, 0,0,16, 16,z+1,z+1,0,txt.getRegionX(),txt.getRegionY(),16,16,false,false);
+
+
+                    /*if (NSJDebug.ENABLED && entity.getType() == NSJMapTile.MapTileType.SOLID) {
+                        //Draw bounding box
+                        Rectangle bb = entity.getBoundingBox();
+                        spriteBatch.draw(NSJDebug.BOUNDINGBOX, bb.getX() - offsetX, bb.getY() - offsetY, bb.getX() + bb.getWidth()- offsetX, bb.getY() + bb.getHeight()- offsetY);
+                    }*/
                 }
             }
 
@@ -180,12 +187,12 @@ public class NSJMap {
 
     }
 
-    public List<NSJMapTile> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {
+    public List<NSJEntity> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {
 
 
 
         //TODO speed up using octrees or something
-        List<NSJMapTile> entities = new ArrayList<NSJMapTile>();
+        List<NSJEntity> entities = new ArrayList<NSJEntity>();
 
         for (int layer : layerMapTiles.keySet()) {
             for (NSJMapTile entity : layerMapTiles.get(layer)) {

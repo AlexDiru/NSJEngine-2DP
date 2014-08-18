@@ -74,25 +74,17 @@ public class NSJCharacter extends NSJEntity {
         //TODO only works for straight lines in either x or y
         //TODO change to use raycast/bresenham line or something similar
 
-/*
+
         if (Math.round(destX) == Math.round(x))
             if (Math.round(destY) > Math.round(y)) {
                 for (int curY = Math.round(y); curY <= Math.round(destY); curY += 1){
-                    List<NSJEntity> entities = map.getEntitiesAtPosition(null, destX, curY);
-
-                    for (NSJEntity entity : entities)
-                        if (!entity.canPlayerWalkThrough)
-                            if (entity != this)
-                                return false;
+                    if (solidFound(map.getEntitiesAtPosition(null, destX, curY)))
+                        return false;
                 }
             } else {
                 for (int curY = Math.round(y); curY >= Math.round(destY); curY -= 1){
-                    List<NSJEntity> entities = map.getEntitiesAtPosition(null, destX, curY);
-
-                    for (NSJEntity entity : entities)
-                        if (!entity.canPlayerWalkThrough)
-                            if (entity != this)
-                                return false;
+                    if (solidFound(map.getEntitiesAtPosition(null, destX, curY)))
+                        return false;
                 }
             }
 
@@ -100,27 +92,34 @@ public class NSJCharacter extends NSJEntity {
         else if (Math.round(destY) == Math.round(y))
             if (Math.round(destX) > Math.round(x)) {
                 for (int curX = Math.round(x); curX <= Math.round(destX); curX += 1){
-                    List<NSJEntity> entities = map.getEntitiesAtPosition(null, curX, destY);
-
-                    for (NSJEntity entity : entities)
-                        if (!entity.canPlayerWalkThrough)
-                            if (entity != this)
-                                return false;
+                    if (solidFound(map.getEntitiesAtPosition(null, curX, destY)))
+                        return false;
                 }
             } else {
                 for (float curX = Math.round(x); curX >= Math.round(destX); curX -= 1){
-                    List<NSJEntity> entities = map.getEntitiesAtPosition(null, curX, destY);
-
-                    for (NSJEntity entity : entities)
-                        if (!entity.canPlayerWalkThrough)
-                            if (entity != this)
-                                return false;
+                    if (solidFound(map.getEntitiesAtPosition(null, curX, destY)))
+                        return false;
                 }
             }
 
-            */
+
 
         return true;
+    }
+
+    private boolean solidFound(List<NSJEntity> entitiesAtPosition) {
+        for (NSJEntity entity : entitiesAtPosition) {
+            if (entity != this) {
+            if (entity instanceof NSJMapTile) {
+                NSJMapTile.MapTileType type = ((NSJMapTile)entity).getType();
+                if (type == NSJMapTile.MapTileType.BOULDER || type == NSJMapTile.MapTileType.SOLID)
+                    return true;
+            }
+            else if (!entity.canPlayerWalkThrough)
+                    return true;
+            }
+        }
+        return false;
     }
 
     public void jump() {

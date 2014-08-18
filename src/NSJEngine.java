@@ -86,24 +86,31 @@ public class NSJEngine implements ApplicationListener {
             totalDistanceMoved = 0;
         }
 
-        if (totalDistanceMoved < TILE_SIZE && moveDir != -1) {
+        if (totalDistanceMoved <= TILE_SIZE + 1 && moveDir != -1) {
             float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
             if (totalDistanceMoved + distanceToMove > TILE_SIZE)
                 distanceToMove = TILE_SIZE - totalDistanceMoved;
 
+            if (distanceToMove < 0)
+                distanceToMove = 0;
 
-                if (moveDir == 0)
-                    player.increaseX(-distanceToMove);
-                else if (moveDir == 1)
-                    player.increaseX(distanceToMove);
-                else if (moveDir == 2)
-                    player.increaseY(distanceToMove);
-                else
-                    player.increaseY(-distanceToMove);
+
+            if (moveDir == 0)
+                player.increaseX(-distanceToMove);
+            else if (moveDir == 1)
+                player.increaseX(distanceToMove);
+            else if (moveDir == 2)
+                player.increaseY(distanceToMove);
+            else
+                player.increaseY(-distanceToMove);
 
             totalDistanceMoved += distanceToMove;
 
             if (totalDistanceMoved == TILE_SIZE) {
+
+                //make sure position is an integer
+                player.roundCoords();
+
                 moveDir = -1;
                 totalDistanceMoved = 0f;
             }
@@ -147,15 +154,6 @@ public class NSJEngine implements ApplicationListener {
 
 
 
-
-
-
-        //Projectile Test
-        /*if (Gdx.input.isKeyPressed(Input.Keys.P)) {
-            float signX = random.nextInt(2) == 1 ? 1 : -1;
-            float signY = random.nextInt(2) == 1 ? 1 : -1;
-            map.addEntity(3,new NSJProjectile(projectile, random.nextInt(640),random.nextInt(480),16,16,signX * (random.nextInt(5) + 3),signY * (random.nextInt(5) + 3),(float)random.nextInt(300)/100,(float)random.nextInt(300)/100, true));
-        }*/
         map.update();
 
         //Render
@@ -164,9 +162,6 @@ public class NSJEngine implements ApplicationListener {
         spriteBatch.begin();
 
         map.render(spriteBatch, (int)player.getX() - Gdx.graphics.getWidth()/2 + player.getWidth()/2, (int)player.getY() - Gdx.graphics.getHeight()/2 + player.getHeight()/2);
-
-        //Crosshair
-        spriteBatch.draw(crosshair, Gdx.input.getX()-8, 480-Gdx.input.getY()-8);
 
 
         NSJGUI.render(spriteBatch, player.getHealth(),0,5);

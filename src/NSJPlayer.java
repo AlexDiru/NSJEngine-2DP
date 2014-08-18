@@ -11,7 +11,7 @@ public class NSJPlayer extends NSJCharacter {
     private TextureRegion up, down, left, right;
 
     public NSJPlayer(Texture player, Texture playerPain) {
-        super(player,playerPain,80,80);
+        super(player,playerPain,32,32);
 
         //boundingBox = new NSJBoundingBox(new NSJVert(4,1), new NSJVert(28,1), new NSJVert(4,30), new NSJVert(28,30));
     }

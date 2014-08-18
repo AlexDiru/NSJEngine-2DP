@@ -1,3 +1,5 @@
+import com.badlogic.gdx.graphics.Texture;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Alex
@@ -7,7 +9,11 @@
  */
 public class NSJDebug {
 
+    public static boolean ENABLED = true;
+
+
     public static final int NOTIF = 0;
+    public static final Texture BOUNDINGBOX = new Texture("assets/red.png");
 
 
     public static void write(int priority, String msg) {

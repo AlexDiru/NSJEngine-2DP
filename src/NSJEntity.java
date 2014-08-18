@@ -44,7 +44,7 @@ public class NSJEntity {
         this.height = height;
 
 
-        boundingBox =  new Rectangle(0,0,width,height);
+        boundingBox =  new Rectangle(3,3,NSJEngine.TILE_SIZE-3,NSJEngine.TILE_SIZE-3);
     }
 
     protected void construct(Texture texture, float x, float y) {
@@ -69,8 +69,10 @@ public class NSJEntity {
             ((NSJPlayer)this).renderCharacter(spriteBatch, 0,0);
         else if (this instanceof NSJCharacter)
             ((NSJCharacter)this).renderCharacter(spriteBatch,offsetX,offsetY);
-        else
-            spriteBatch.draw(textureRegion,x,y,32,32);
+        else {
+            spriteBatch.draw(textureRegion,x,y,NSJEngine.TILE_SIZE, NSJEngine.TILE_SIZE);
+
+        }
         } catch (Exception e) {
            e.printStackTrace();
         }
@@ -83,7 +85,9 @@ public class NSJEntity {
 
     public Rectangle getBoundingBox() {
         boundingBox.setPosition(x,y);
-        return boundingBox;
+        //boundingBox.setWidth(4);
+        return new Rectangle(boundingBox.getX(), boundingBox.getY(), 4,4);
+        //return boundingBox;
     }
 
     public float getX() {
@@ -135,4 +139,8 @@ public class NSJEntity {
         return clone;
     }
 
+    public void roundCoords() {
+        x = Math.round(x);
+        y = Math.round(y);
+    }
 }

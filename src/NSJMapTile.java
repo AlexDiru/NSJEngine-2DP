@@ -22,12 +22,6 @@ public class NSJMapTile extends NSJEntity {
     private MapTileType type;
     private int layer;
 
-    public Rectangle getBoundingBox() {
-        return boundingBox;
-    }
-
-    protected Rectangle boundingBox;
-
     public int getLayer() {
         return layer;
     }
