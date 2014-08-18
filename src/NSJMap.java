@@ -1,7 +1,6 @@
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 public class NSJMap {
 
     //Maps layer to objects on that layer
-    public HashMap<Integer, List<NSJMapTile>> layerMap = new HashMap<Integer, List<NSJMapTile>>();
+    public HashMap<Integer, List<NSJMapTile>> layerMapTiles = new HashMap<Integer, List<NSJMapTile>>();
 
     private NSJEntity player;
     private List<NSJEntity> entities = new ArrayList<NSJEntity>();
@@ -33,7 +32,7 @@ public class NSJMap {
             for (String col : cols) {
                 if (!col.equals(" ")) {
                     int id = Integer.parseInt(col);
-                    addEntity(layerNum, entityEncoding[id].clone(x,y));
+                    addEntity(layerNum, entityEncoding[id].clone(x, y));
                 }
                 x += tileSize;
             }
@@ -110,9 +109,9 @@ public class NSJMap {
 
     public void addEntity(int layerNum, NSJMapTile entity) {
         //Add to layer map
-        if (layerMap.get(layerNum) == null)
-            layerMap.put(layerNum, new ArrayList<NSJMapTile>());
-        layerMap.get(layerNum).add(entity);
+        if (layerMapTiles.get(layerNum) == null)
+            layerMapTiles.put(layerNum, new ArrayList<NSJMapTile>());
+        layerMapTiles.get(layerNum).add(entity);
 
 
         entity.setLayer(layerNum);
@@ -121,11 +120,11 @@ public class NSJMap {
     public void update() {
         /*List<NSJEntity> toRemove = new ArrayList<NSJEntity>();
 
-        for (int layer : layerMap.keySet()) {
-            for (int i = 0; i <  layerMap.get(layer).size(); i++) {
-                NSJEntity entity = layerMap.get(layer).get(i);
+        for (int layer : layerMapTiles.keySet()) {
+            for (int i = 0; i <  layerMapTiles.get(layer).size(); i++) {
+                NSJEntity entity = layerMapTiles.get(layer).get(i);
 
-                if (layerMap.get(layer).get(i) instanceof NSJDynamicEntity) {
+                if (layerMapTiles.get(layer).get(i) instanceof NSJDynamicEntity) {
                     NSJDynamicEntity dynamicEntity = (NSJDynamicEntity)entity;
                     dynamicEntity.update(this);
                 }
@@ -145,9 +144,13 @@ public class NSJMap {
     }
 
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {
-        for (int layer : layerMap.keySet()) {
-            for (NSJMapTile entity : layerMap.get(layer)) {
-                spriteBatch.draw(textures[entity.getTextureId()], entity.getX(), entity.getY());
+        float scaleRatio = 0;
+        int z = 0;
+
+        for (int layer : layerMapTiles.keySet()) {
+            for (NSJMapTile entity : layerMapTiles.get(layer)) {
+                TextureRegion txt = textures[entity.getTextureId()];
+                spriteBatch.draw(txt.getTexture(), entity.getX() - offsetX - scaleRatio/2, entity.getY() - offsetY - scaleRatio/2, 0,0,16, 16,z+1,z+1,0,txt.getRegionX(),txt.getRegionY(),16,16,false,false);
                 //entity.render(spriteBatch, offsetX, offsetY);
             }
         }
@@ -160,8 +163,8 @@ public class NSJMap {
         //TODO speed up using octrees or something
         List<NSJMapTile> entities = new ArrayList<NSJMapTile>();
 
-        for (int layer : layerMap.keySet()) {
-            for (NSJMapTile entity : layerMap.get(layer)) {
+        for (int layer : layerMapTiles.keySet()) {
+            for (NSJMapTile entity : layerMapTiles.get(layer)) {
                if (boundingBox == null && entity.getBoundingBox().contains(curX,curY)) {
                     entities.add(entity);
                 } else if (boundingBox != null && entity.getBoundingBox().overlaps(boundingBox))
