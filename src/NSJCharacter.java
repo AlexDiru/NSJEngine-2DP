@@ -74,7 +74,7 @@ public class NSJCharacter extends NSJEntity {
         //TODO only works for straight lines in either x or y
         //TODO change to use raycast/bresenham line or something similar
 
-
+/*
         if (Math.round(destX) == Math.round(x))
             if (Math.round(destY) > Math.round(y)) {
                 for (int curY = Math.round(y); curY <= Math.round(destY); curY += 1){
@@ -117,6 +117,8 @@ public class NSJCharacter extends NSJEntity {
                                 return false;
                 }
             }
+
+            */
 
         return true;
     }

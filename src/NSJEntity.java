@@ -1,5 +1,6 @@
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
@@ -16,6 +17,7 @@ public class NSJEntity {
     protected float y;
     protected float z;
     protected Texture texture;
+    protected TextureRegion textureRegion;
     protected boolean canPlayerWalkThrough = true;
     private boolean destroyed = false; //Whether entity needs removing from map
 
@@ -32,6 +34,8 @@ public class NSJEntity {
 
     }
 
+
+
     protected void construct(Texture texture, float x, float y, int width, int height)  {
         this.x = x;
         this.y = y;
@@ -47,12 +51,14 @@ public class NSJEntity {
         construct(texture, x, y, texture.getWidth(), texture.getHeight());
     }
 
-    public NSJEntity(Texture texture, float x, float y, int width, int height)  {
-        construct(texture, x, y, width, height);
+    public NSJEntity(TextureRegion texture, float x, float y, int width, int height)  {
+        construct(null, x, y, width, height);
+        textureRegion = texture;
     }
 
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {
 
+        try{
 
         float scaleRatio = (width*(z+1))/width;
 
@@ -64,7 +70,11 @@ public class NSJEntity {
         else if (this instanceof NSJCharacter)
             ((NSJCharacter)this).renderCharacter(spriteBatch,offsetX,offsetY);
         else
-            spriteBatch.draw(texture, x - offsetX - scaleRatio/2, y - offsetY - scaleRatio/2, 0,0,width, height,z+1,z+1,0,0,0,texture.getWidth(), texture.getHeight(),false,false);
+            spriteBatch.draw(textureRegion,x,y,32,32);
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return;
     }
 
     public void setCanPlayerWalkThrough(boolean canPlayerWalkThrough) {

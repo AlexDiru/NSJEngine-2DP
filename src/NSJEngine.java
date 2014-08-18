@@ -144,32 +144,9 @@ public class NSJEngine implements ApplicationListener {
         }
 
 
-        if (Gdx.input.isKeyPressed(Input.Keys.APOSTROPHE)) {
-            map.increaseEntityZ(-1);
-            NSJDebug.write(NSJDebug.NOTIF,"s");
-        }
 
 
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SYM))
-            map.increaseEntityZ(1);
-
-
-        //Shoot
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && mouseFlag) {
-            mouseFlag = false;
-            int destX = (int)(Gdx.input.getX() + player.getX() - (Gdx.graphics.getWidth() >> 1));
-            int destY = (int)((Gdx.graphics.getHeight() - Gdx.input.getY()) + player.getY() - (Gdx.graphics.getHeight() >> 1));
-
-            //Adjust destX and destY for crosshair centre offsetaaaaaaaaa
-            destX -= crosshair.getWidth() >> 1;
-            destY -= crosshair.getHeight() >> 1;
-
-            NSJPair<Float, Float> speeds = NSJProjectile.computeSpeeds(player.getX(), player.getY(), destX, destY, 200f);
-            map.addEntity(1, new NSJProjectile(NSJProjectile.Fireball, player.getX(), player.getY(), destX, destY, player));
-
-        } else if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT))
-        mouseFlag = true;
 
 
         //Projectile Test

@@ -37,10 +37,6 @@ public class NSJDynamicEntity extends NSJEntity {
         if (isDestroyed())
             return;
 
-        if (this instanceof NSJProjectile) {
-            ((NSJProjectile)this).updateProjectile(map);
-            return;
-        }
         velocityX += accelerationX * Gdx.graphics.getDeltaTime();
         velocityY += accelerationY* Gdx.graphics.getDeltaTime();
         x += velocityX* Gdx.graphics.getDeltaTime();

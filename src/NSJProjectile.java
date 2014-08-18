@@ -86,65 +86,6 @@ public class NSJProjectile extends NSJDynamicEntity {
         }
     }
 
-    public void updateProjectile(NSJMap map) {
-
-
-
-        velocityX += accelerationX * Gdx.graphics.getDeltaTime();
-        velocityY += accelerationY* Gdx.graphics.getDeltaTime();
-
-        float destX = x + (velocityX * Gdx.graphics.getDeltaTime());
-        float destY = y + (velocityY * Gdx.graphics.getDeltaTime());
-
-        List<Point> inBetween = NSJBresenham.getPoints((int)x,(int)y,(int)destX,(int)destY);
-
-        boolean collidedWithCreator = false;
-
-        for (Point pt : inBetween) {
-            List<NSJEntity> entities = map.getEntitiesAtPosition(getBoundingBox(), pt.x,pt.y);
-            for (NSJEntity entity : entities) {
-                if (entity instanceof NSJCharacter || entity instanceof NSJPlayer)
-                {
-                    if (entity == creator && avoidCreatorInitiallyFlag) {
-                        collidedWithCreator = true;
-                        continue;
-                    }
-
-                    if (getBoundingBox().overlaps(entity.getBoundingBox())) {
-                        ((NSJCharacter)entity).onProjectileCollision(this);
-
-                        //Destroy projectile
-                        destroy();
-
-
-                        return;
-                    }
-                }
-
-                if (!entity.canPlayerWalkThrough)
-                {
-                    if (getBoundingBox().overlaps(entity.getBoundingBox())) {
-                        onSolidCollision(entity);
-                        //Potentially recalculate update with changed velocities
-                        //But i think this will be complex
-
-
-                        x += velocityX* Gdx.graphics.getDeltaTime();
-                        y += velocityY* Gdx.graphics.getDeltaTime();
-                        return;
-                    }
-                }
-            }
-        }
-
-        ricochetFlag = false;
-
-        if (!collidedWithCreator)
-            avoidCreatorInitiallyFlag = false;
-
-        x += velocityX* Gdx.graphics.getDeltaTime();
-        y += velocityY* Gdx.graphics.getDeltaTime();
-    }
 
     public int getDamage() {
         return damage;

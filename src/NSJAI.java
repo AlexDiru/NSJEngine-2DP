@@ -97,12 +97,7 @@ public class NSJAI extends NSJCharacter {
             totalDistanceMoved = 0;
         }
 
-        System.out.println("totaldistmoved: " + totalDistanceMoved);
-        System.out.println("moveidr: " + moveDir);
-        System.out.println("movedist: " + moveDistance);
-
         if (totalDistanceMoved <= moveDistance  && moveDir != -1) {
-
 
             float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
             if (totalDistanceMoved + distanceToMove > moveDistance)

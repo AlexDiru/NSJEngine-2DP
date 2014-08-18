@@ -1,5 +1,7 @@
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
@@ -10,14 +12,17 @@ import java.util.HashMap;
 public class NSJMap {
 
     //Maps layer to objects on that layer
-    public HashMap<Integer, List<NSJEntity>> layerMap = new HashMap<Integer, List<NSJEntity>>();
+    public HashMap<Integer, List<NSJMapTile>> layerMap = new HashMap<Integer, List<NSJMapTile>>();
 
-    public List<NSJProjectile> projectiles = new ArrayList<NSJProjectile>();
     private NSJEntity player;
+    private List<NSJEntity> entities = new ArrayList<NSJEntity>();
 
 
+    //Tileset Map
+    private TextureRegion[] textures;
 
-    private void layerFromTileMap(int layerNum, String tileMap, NSJEntity[] entityEncoding, int tileSize) {
+
+    private void layerFromTileMap(int layerNum, String tileMap, NSJMapTile[] entityEncoding, int tileSize) {
         String[] rows = tileMap.split("\n");
 
         int y = 0;
@@ -28,7 +33,7 @@ public class NSJMap {
             for (String col : cols) {
                 if (!col.equals(" ")) {
                     int id = Integer.parseInt(col);
-                    addEntity(layerNum, entityEncoding[id].copy(x,y));
+                    addEntity(layerNum, entityEncoding[id].clone(x,y));
                 }
                 x += tileSize;
             }
@@ -39,16 +44,16 @@ public class NSJMap {
 
 
     public NSJMap(NSJEntity player) {
-        Texture floor = new Texture("assets/floor.png");
-        Texture wall = new Texture("assets/wall.png");
+        //Texture floor = new Texture("assets/floor.png");
         //Texture me = new Texture("assets/ship.png");
        // Texture marcus = new Texture("assets/bullet.png");
         //Texture churly = new Texture("assets/enemybullet.png");
-        Texture water = new Texture("assets/water.png");
 
-        NSJEntity floorE = new NSJEntity(floor, 0,0, 32, 32);
-        NSJEntity wallE = new NSJEntity(wall,0,0,32,32);
-        wallE.setCanPlayerWalkThrough(false);
+        textures = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/mapsheet.png")),16,16);
+
+        NSJMapTile floorTile = new NSJMapTile(0,-1,-1, NSJMapTile.MapTileType.OPEN);
+        NSJMapTile wallTile = new NSJMapTile(9,-1,-1, NSJMapTile.MapTileType.SOLID);
+
 
         this.player = player;
 
@@ -92,27 +97,21 @@ public class NSJMap {
                 " , , , , , ,1,0,0,1,0,0,0,0,0,1\n" +
                 " , , , , , , ,1,0,0,0,0,0,0,0,1\n" +
                 " , , , , , , , ,1,1,1,1,1,1,1, \n",
-                new NSJEntity[] { floorE, wallE },32);
+                new NSJMapTile[] { floorTile, wallTile },16);
 
 
-        List<NSJVert> verts = new ArrayList<NSJVert>();
-        verts.add(new NSJVert(30,10));
-        verts.add(new NSJVert(110,10));
-        verts.add(new NSJVert(130,30));
-        verts.add(new NSJVert(130,110));
-        verts.add(new NSJVert(110,130));
-        verts.add(new NSJVert(30,130));
-        verts.add(new NSJVert(10,110));
-        verts.add(new NSJVert(10,30));
-        NSJPolygon poly = new NSJPolygon(water, 150,150, verts);
-        addEntity(1, poly);
 
     }
 
     public void addEntity(int layerNum, NSJEntity entity) {
+        entities.add(entity);
+        entity.setLayer(layerNum);
+    }
+
+    public void addEntity(int layerNum, NSJMapTile entity) {
         //Add to layer map
         if (layerMap.get(layerNum) == null)
-            layerMap.put(layerNum, new ArrayList<NSJEntity>());
+            layerMap.put(layerNum, new ArrayList<NSJMapTile>());
         layerMap.get(layerNum).add(entity);
 
 
@@ -120,7 +119,7 @@ public class NSJMap {
     }
 
     public void update() {
-        List<NSJEntity> toRemove = new ArrayList<NSJEntity>();
+        /*List<NSJEntity> toRemove = new ArrayList<NSJEntity>();
 
         for (int layer : layerMap.keySet()) {
             for (int i = 0; i <  layerMap.get(layer).size(); i++) {
@@ -142,43 +141,27 @@ public class NSJMap {
 
         for (NSJEntity rem : toRemove) {
             destroyEntity(rem);
-        }
+        }*/
     }
 
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {
         for (int layer : layerMap.keySet()) {
-            for (NSJEntity entity : layerMap.get(layer)) {
-                if (entity instanceof NSJPlayer)
-                    ((NSJPlayer)entity).render(spriteBatch);
-                else
-                    entity.render(spriteBatch, offsetX, offsetY);
+            for (NSJMapTile entity : layerMap.get(layer)) {
+                spriteBatch.draw(textures[entity.getTextureId()], entity.getX(), entity.getY());
+                //entity.render(spriteBatch, offsetX, offsetY);
             }
         }
     }
 
-    public List<NSJEntity> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {
-/*
-        List<NSJEntity> entities = subtree.get(NSJHash.hashEntityPosition(curX,curY));
-        List<NSJEntity> entitiess = new ArrayList<NSJEntity>();
+    public List<NSJMapTile> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {
 
-
-        for (NSJEntity entity : entities) {
-            if (NSJBoundingBox.within(curX, curY, entity)) {
-                entitiess.add(entity);
-            }
-        }
-
-
-        return entitiess;
-        */
 
 
         //TODO speed up using octrees or something
-        List<NSJEntity> entities = new ArrayList<NSJEntity>();
-
+        List<NSJMapTile> entities = new ArrayList<NSJMapTile>();
 
         for (int layer : layerMap.keySet()) {
-            for (NSJEntity entity : layerMap.get(layer)) {
+            for (NSJMapTile entity : layerMap.get(layer)) {
                if (boundingBox == null && entity.getBoundingBox().contains(curX,curY)) {
                     entities.add(entity);
                 } else if (boundingBox != null && entity.getBoundingBox().overlaps(boundingBox))
@@ -190,56 +173,8 @@ public class NSJMap {
 
 
     }
-
-    public List<NSJEntity> getEntitiesAtPosition(NSJEntity entityA) {
-/*
-        List<NSJEntity> entities = subtree.get(NSJHash.hashEntityPosition(curX,curY));
-        List<NSJEntity> entitiess = new ArrayList<NSJEntity>();
-
-
-        for (NSJEntity entity : entities) {
-            if (NSJBoundingBox.within(curX, curY, entity)) {
-                entitiess.add(entity);
-            }
-        }
-
-
-        return entitiess;
-        */
-
-
-        //TODO speed up using octrees or something
-        List<NSJEntity> entities = new ArrayList<NSJEntity>();
-
-
-        for (int layer : layerMap.keySet()) {
-            for (NSJEntity entity : layerMap.get(layer)) {
-                if (entity.getBoundingBox().overlaps(entityA.getBoundingBox())) {
-                    entities.add(entity);
-                }
-            }
-        }
-
-        return entities;
-
-
-    }
-
-    public void destroyEntity(NSJEntity entity) {
-        //Remove from layer map
-        layerMap.get(entity.getLayer()).remove(entity);
-
-        if (entity instanceof NSJProjectile)
-            projectiles.remove(entity);
-
-    }
-
     public NSJEntity getPlayer() {
         return player;
     }
 
-    public void increaseEntityZ(int v) {
-        for (NSJEntity entity : layerMap.get(0))
-            entity.increaseZ(v);
-    }
 }
