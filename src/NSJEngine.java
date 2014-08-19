@@ -46,7 +46,7 @@ public class NSJEngine implements ApplicationListener {
     public void create() {
         spriteBatch = new SpriteBatch();
 
-        player =  new NSJPlayer(new Texture("assets/player.png"),new Texture("assets/player.png"));
+        player =  new NSJPlayer(64,64);
 
         map = new NSJMap(player);
 

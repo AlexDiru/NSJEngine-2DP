@@ -8,8 +8,6 @@ import java.util.List;
 public class NSJCharacter extends NSJEntity {
 
     private int health =69696969;
-    private float showPainTextureTimer = 0;
-    protected Texture painTexture;
 
 
     private boolean jumping = false;
@@ -21,13 +19,8 @@ public class NSJCharacter extends NSJEntity {
     protected TextureRegion up, down, left;
     protected TextureRegion current;
 
-    protected NSJCharacter() {
-
-    }
-
-    public NSJCharacter(Texture texture, Texture painTexture, float x, float y) {
-        super(texture, x, y);
-        this.painTexture = painTexture;
+    protected NSJCharacter(float x, float y) {
+        super(x,y);
     }
 
 
@@ -42,15 +35,8 @@ public class NSJCharacter extends NSJEntity {
         return health;
     }
 
-    public void onProjectileCollision(NSJProjectile proj) {
-        health -= proj.getDamage();
-        showPainTextureTimer = 0.5f;
-    }
 
     public void update(NSJMap map) {
-
-        if (showPainTextureTimer > 0)
-            showPainTextureTimer -= Gdx.graphics.getDeltaTime();
 
         if (health <= 0) {
             destroy();
@@ -77,11 +63,14 @@ public class NSJCharacter extends NSJEntity {
 
 
     public boolean canMoveTo(NSJMap map, float destX, float destY) {
-        //TODO only works for straight lines in either x or y
-        //TODO change to use raycast/bresenham line or something similar
+
+        if (this instanceof NSJAI) {
+            System.out.println("x,y,newx,newy : " + x + "," + y + "," + destX + "," + destY);
+        }
 
 
-        if (Math.round(destX) == Math.round(x))
+
+        if (Math.round(destX) == Math.round(x)) {
             if (Math.round(destY) > Math.round(y)) {
                 for (int curY = Math.round(y); curY <= Math.round(destY); curY += 1){
                     if (solidFound(map.getEntitiesAtPosition(null, destX, curY)))
@@ -93,9 +82,8 @@ public class NSJCharacter extends NSJEntity {
                         return false;
                 }
             }
-
-
-        else if (Math.round(destY) == Math.round(y))
+        }
+        else if (Math.round(destY) == Math.round(y)) {
             if (Math.round(destX) > Math.round(x)) {
                 for (int curX = Math.round(x); curX <= Math.round(destX); curX += 1){
                     if (solidFound(map.getEntitiesAtPosition(null, curX, destY)))
@@ -107,7 +95,7 @@ public class NSJCharacter extends NSJEntity {
                         return false;
                 }
             }
-
+        }
 
 
         return true;
@@ -116,13 +104,14 @@ public class NSJCharacter extends NSJEntity {
     private boolean solidFound(List<NSJEntity> entitiesAtPosition) {
         for (NSJEntity entity : entitiesAtPosition) {
             if (entity != this) {
-            if (entity instanceof NSJMapTile) {
-                NSJMapTile.MapTileType type = ((NSJMapTile)entity).getType();
-                if (type == NSJMapTile.MapTileType.BOULDER || type == NSJMapTile.MapTileType.SOLID)
+                if (entity instanceof NSJMapTile) {
+                    NSJMapTile.MapTileType type = ((NSJMapTile)entity).getType();
+                    if (type == NSJMapTile.MapTileType.BOULDER || type == NSJMapTile.MapTileType.SOLID)
+                        return true;
+                }
+                else if (!entity.canPlayerWalkThrough) {
                     return true;
-            }
-            else if (!entity.canPlayerWalkThrough)
-                    return true;
+                }
             }
         }
         return false;

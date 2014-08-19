@@ -32,10 +32,8 @@ public class NSJAI extends NSJCharacter {
     private float totalDistanceMoved = 0f;
 
     public NSJAI(int id, float x, float y) {
-
+        super(x,y);
         aiType = AIType_Poke;
-        this.x = x;
-        this.y = y;
     }
 
     public void iterateAITypeUp() {
@@ -83,18 +81,22 @@ public class NSJAI extends NSJCharacter {
         int direction = random.nextInt(4);
 
         if (moveWaitTime <= 0 && moveDir == -1) {
-            if (direction == 0)
+            if (direction == 0) {
                 if (canMoveTo(map, x-NSJEngine.TILE_SIZE, y))
                     moveDir = 0;
-            if (direction == 1)
+            }
+            else if (direction == 1) {
                 if (canMoveTo(map, x+NSJEngine.TILE_SIZE, y))
                     moveDir = 1;
-            if (direction == 2)
+            }
+            else if (direction == 2) {
                 if (canMoveTo(map, x, y+NSJEngine.TILE_SIZE))
                     moveDir = 2;
-            if (direction == 3)
+            }
+            else if (direction == 3) {
                 if (canMoveTo(map, x, y-NSJEngine.TILE_SIZE))
                     moveDir = 3;
+            }
 
             totalDistanceMoved = 0;
         }
@@ -122,7 +124,7 @@ public class NSJAI extends NSJCharacter {
             if (totalDistanceMoved >= NSJEngine.TILE_SIZE) {
                 moveDir = -1;
                 totalDistanceMoved = 0f;
-                moveWaitTime = 1;
+                moveWaitTime = 0;
             }
         }
 

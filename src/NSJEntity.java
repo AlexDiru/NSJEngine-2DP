@@ -16,7 +16,6 @@ public class NSJEntity {
     protected float x;
     protected float y;
     protected float z;
-    protected Texture texture;
     protected TextureRegion textureRegion;
     protected boolean canPlayerWalkThrough = true;
     private boolean destroyed = false; //Whether entity needs removing from map
@@ -26,8 +25,8 @@ public class NSJEntity {
     protected int height;
     private int layer;
 
-    public NSJEntity(Texture texture, float x, float y) {
-        construct(texture, x, y);
+    public NSJEntity( float x, float y) {
+        construct(x, y, NSJEngine.TILE_SIZE, NSJEngine.TILE_SIZE);
     }
 
     protected NSJEntity() {
@@ -36,10 +35,9 @@ public class NSJEntity {
 
 
 
-    protected void construct(Texture texture, float x, float y, int width, int height)  {
+    protected void construct(float x, float y, int width, int height)  {
         this.x = x;
         this.y = y;
-        this.texture = texture;
         this.width = width;
         this.height = height;
 
@@ -47,12 +45,9 @@ public class NSJEntity {
         boundingBox =  new Rectangle(3,3,NSJEngine.TILE_SIZE-3,NSJEngine.TILE_SIZE-3);
     }
 
-    protected void construct(Texture texture, float x, float y) {
-        construct(texture, x, y, texture.getWidth(), texture.getHeight());
-    }
 
     public NSJEntity(TextureRegion texture, float x, float y, int width, int height)  {
-        construct(null, x, y, width, height);
+        construct( x, y, width, height);
         textureRegion = texture;
     }
 
@@ -117,18 +112,6 @@ public class NSJEntity {
         return destroyed;
     }
 
-    public NSJEntity copy(int newXPosition, int newYPosition) {
-        NSJEntity clone = new NSJEntity();
-        clone.x = newXPosition;
-        clone.y = newYPosition;
-        clone.texture = texture;
-        clone.width = width;
-        clone.height = height;
-        clone.boundingBox = new Rectangle(clone.x, clone.y, clone.width, clone.height);
-        clone.canPlayerWalkThrough = canPlayerWalkThrough;
-        clone.destroyed = false;
-        return clone;
-    }
 
     public void roundCoords() {
         x = Math.round(x);

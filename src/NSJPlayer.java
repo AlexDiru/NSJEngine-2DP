@@ -9,10 +9,8 @@ import java.util.List;
 public class NSJPlayer extends NSJCharacter {
 
 
-    public NSJPlayer(Texture player, Texture playerPain) {
-        super(player,playerPain,32,32);
-
-        //boundingBox = new NSJBoundingBox(new NSJVert(4,1), new NSJVert(28,1), new NSJVert(4,30), new NSJVert(28,30));
+    public NSJPlayer(float x, float y) {
+        super(x,y);
     }
 
 

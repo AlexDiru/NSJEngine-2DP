@@ -56,8 +56,20 @@ public class NSJMap {
 
         NSJAI testAi = new NSJAI(NSJAI.RandomMovement, 128,128);
         addEntity(1,testAi);
+        NSJAI testAi2 = new NSJAI(NSJAI.RandomMovement, 128-32,128);
+        addEntity(1,testAi2);
+        NSJAI testAi3 = new NSJAI(NSJAI.RandomMovement, 128-16,128-16);
+        addEntity(1,testAi3);
+        NSJAI testAi4 = new NSJAI(NSJAI.RandomMovement, 128,128-32);
+        addEntity(1,testAi4);
+        NSJAI testAi5 = new NSJAI(NSJAI.RandomMovement, 128-32,128-32);
+        addEntity(1,testAi5);
 
         testAi.setTextures(npcs[1],npcs[2],npcs[3]);
+        testAi2.setTextures(npcs[1],npcs[2],npcs[3]);
+        testAi3.setTextures(npcs[1],npcs[2],npcs[3]);
+        testAi4.setTextures(npcs[1],npcs[2],npcs[3]);
+        testAi5.setTextures(npcs[1],npcs[2],npcs[3]);
         player.setTextures(npcs[102], npcs[74], npcs[241]);
 
 
