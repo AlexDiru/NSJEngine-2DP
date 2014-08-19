@@ -125,6 +125,8 @@ public class NSJAI extends NSJCharacter {
                 moveDir = -1;
                 totalDistanceMoved = 0f;
                 moveWaitTime = 0;
+                x = Math.round(x);
+                y = Math.round(y);
             }
         }
 
