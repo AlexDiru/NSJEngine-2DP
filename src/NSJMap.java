@@ -14,6 +14,7 @@ public class NSJMap {
     public HashMap<Integer, List<NSJMapTile>> layerMapTiles = new HashMap<Integer, List<NSJMapTile>>();
     public HashMap<Integer, List<NSJEntity>> layerMapEntities = new HashMap<Integer, List<NSJEntity>>();
 
+
     private NSJEntity player;
 
 
@@ -206,5 +207,4 @@ public class NSJMap {
     public NSJEntity getPlayer() {
         return player;
     }
-
 }

@@ -2,6 +2,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.List;
 
@@ -18,6 +19,12 @@ public class NSJCharacter extends NSJEntity {
 
     protected TextureRegion up, down, left;
     protected TextureRegion current;
+
+    protected int moveDir = -1;
+    protected float moveWaitTime = 1f;
+    protected float totalDistanceMoved = 0f;
+    protected int movementDestinationX;
+    protected int movementDestinationY;
 
     protected NSJCharacter(float x, float y) {
         super(x,y);
@@ -146,5 +153,39 @@ public class NSJCharacter extends NSJEntity {
             current = up;
         else
             current = down;
+    }
+
+
+    public void updateMovement(NSJMap map) {
+
+
+        if (totalDistanceMoved <= NSJEngine.TILE_SIZE  && moveDir != -1) {
+
+            float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
+            if (totalDistanceMoved + distanceToMove > NSJEngine.TILE_SIZE)
+                distanceToMove = NSJEngine.TILE_SIZE - totalDistanceMoved;
+            else if (totalDistanceMoved + distanceToMove == NSJEngine.TILE_SIZE)
+                distanceToMove = 0;
+
+
+            if (moveDir == 0)
+                increaseX(-distanceToMove);
+            else if (moveDir == 1)
+                increaseX(distanceToMove);
+            else if (moveDir == 2)
+                increaseY(distanceToMove);
+            else if (moveDir == 3)
+                increaseY(-distanceToMove);
+
+            totalDistanceMoved += distanceToMove;
+
+            if (totalDistanceMoved >= NSJEngine.TILE_SIZE) {
+                moveDir = -1;
+                totalDistanceMoved = 0f;
+                moveWaitTime = 1f + (float)(Math.random()*3);
+                x = actualX;
+                y = actualY;
+            }
+        }
     }
 }

@@ -35,7 +35,6 @@ public class NSJEngine implements ApplicationListener {
     private int x = 0;
     private int y = 0;
 
-    private int moveDir = -1;
     private float totalDistanceMoved = 0f;
 
     public static final int TILE_SIZE = 16;
@@ -64,24 +63,40 @@ public class NSJEngine implements ApplicationListener {
     @Override
     public void render() {
 
-        if (moveDir == -1) {
-            if (Gdx.input.isKeyPressed(Input.Keys.A))
-                if (player.canMoveTo(map, player.getX()-TILE_SIZE, player.getY()))
-                    moveDir = 0;
-            if (Gdx.input.isKeyPressed(Input.Keys.D))
-                if (player.canMoveTo(map, player.getX()+TILE_SIZE, player.getY()))
-                    moveDir = 1;
-            if (Gdx.input.isKeyPressed(Input.Keys.W))
-                if (player.canMoveTo(map, player.getX(), player.getY()+TILE_SIZE))
-                    moveDir = 2;
-            if (Gdx.input.isKeyPressed(Input.Keys.S))
-                if (player.canMoveTo(map, player.getX(), player.getY()-TILE_SIZE))
-                    moveDir = 3;
+        if (player.moveDir == -1) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                if (player.canMoveTo(map, player.getX()-TILE_SIZE, player.getY())) {
+                    player.moveDir = 0;
+                    player.actualX = player.getX() - TILE_SIZE;
+                    player.actualY = player.getY();
+                }
+            }
+            else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                if (player.canMoveTo(map, player.getX()+TILE_SIZE, player.getY())) {
+                    player.moveDir = 1;
+                    player.actualX = player.getX() + TILE_SIZE;
+                    player.actualY = player.getY();
+                }
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                if (player.canMoveTo(map, player.getX(), player.getY()+TILE_SIZE)) {
+                    player.moveDir = 2;
+                    player.actualX = player.getX();
+                    player.actualY = player.getY() + TILE_SIZE;
+                }
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                if (player.canMoveTo(map, player.getX(), player.getY()-TILE_SIZE)) {
+                    player.moveDir = 3;
+                    player.actualX = player.getX();
+                    player.actualY = player.getY() - TILE_SIZE;
+                }
+            }
 
             totalDistanceMoved = 0;
         }
 
-        if (totalDistanceMoved <= TILE_SIZE + 1 && moveDir != -1) {
+        /*if (totalDistanceMoved <= TILE_SIZE + 1 && player.moveDir != -1) {
             float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
             if (totalDistanceMoved + distanceToMove > TILE_SIZE)
                 distanceToMove = TILE_SIZE - totalDistanceMoved;
@@ -90,11 +105,11 @@ public class NSJEngine implements ApplicationListener {
                 distanceToMove = 0;
 
 
-            if (moveDir == 0)
+            if (player.moveDir == 0)
                 player.increaseX(-distanceToMove);
-            else if (moveDir == 1)
+            else if (player.moveDir == 1)
                 player.increaseX(distanceToMove);
-            else if (moveDir == 2)
+            else if (player.moveDir == 2)
                 player.increaseY(distanceToMove);
             else
                 player.increaseY(-distanceToMove);
@@ -106,10 +121,12 @@ public class NSJEngine implements ApplicationListener {
                 //make sure position is an integer
                 player.roundCoords();
 
-                moveDir = -1;
+                player.moveDir = -1;
                 totalDistanceMoved = 0f;
             }
-        }
+        }*/
+
+        player.updateMovement(map);
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT_BRACKET) && leftBracketFlag) {
             ((NSJAI)enemy).iterateAITypeDown();

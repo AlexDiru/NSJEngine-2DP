@@ -15,6 +15,8 @@ public class NSJEntity {
 
     protected float x;
     protected float y;
+    protected float actualX;
+    protected float actualY;
     protected float z;
     protected TextureRegion textureRegion;
     protected boolean canPlayerWalkThrough = true;
@@ -38,6 +40,8 @@ public class NSJEntity {
     protected void construct(float x, float y, int width, int height)  {
         this.x = x;
         this.y = y;
+        actualX = x;
+        actualY = y;
         this.width = width;
         this.height = height;
 
@@ -70,10 +74,10 @@ public class NSJEntity {
     }
 
     public Rectangle getBoundingBox() {
-        boundingBox.setPosition(x,y);
-        //boundingBox.setWidth(4);
+
+
+        boundingBox.setPosition(actualX,actualY);
         return new Rectangle(boundingBox.getX(), boundingBox.getY(), 4,4);
-        //return boundingBox;
     }
 
     public float getX() {

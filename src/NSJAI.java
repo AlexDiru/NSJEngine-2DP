@@ -25,11 +25,8 @@ public class NSJAI extends NSJCharacter {
     private int aiType;
 
 
-    private float moveWaitTime = 0f; //Time to wait  between movements
-
     //Stop jittered movement (same as in NSJEngine so prob refactoring to do to avoid repeated code)
-    private int moveDir = -1;
-    private float totalDistanceMoved = 0f;
+
 
     public NSJAI(int id, float x, float y) {
         super(x,y);
@@ -82,53 +79,38 @@ public class NSJAI extends NSJCharacter {
 
         if (moveWaitTime <= 0 && moveDir == -1) {
             if (direction == 0) {
-                if (canMoveTo(map, x-NSJEngine.TILE_SIZE, y))
+                if (canMoveTo(map, x-NSJEngine.TILE_SIZE, y)) {
                     moveDir = 0;
+                    actualX = x-NSJEngine.TILE_SIZE;
+                    actualY = y;
+                }
             }
             else if (direction == 1) {
-                if (canMoveTo(map, x+NSJEngine.TILE_SIZE, y))
+                if (canMoveTo(map, x+NSJEngine.TILE_SIZE, y)) {
                     moveDir = 1;
+                    actualX = x+NSJEngine.TILE_SIZE;
+                    actualY = y;
+                }
             }
             else if (direction == 2) {
-                if (canMoveTo(map, x, y+NSJEngine.TILE_SIZE))
+                if (canMoveTo(map, x, y+NSJEngine.TILE_SIZE)) {
                     moveDir = 2;
+                    actualX = x;
+                    actualY = y+NSJEngine.TILE_SIZE;
+                }
             }
             else if (direction == 3) {
-                if (canMoveTo(map, x, y-NSJEngine.TILE_SIZE))
+                if (canMoveTo(map, x, y-NSJEngine.TILE_SIZE)) {
                     moveDir = 3;
+                    actualX = x;
+                    actualY = y-NSJEngine.TILE_SIZE;
+                }
             }
 
             totalDistanceMoved = 0;
         }
 
-        if (totalDistanceMoved <= NSJEngine.TILE_SIZE  && moveDir != -1) {
-
-            float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
-            if (totalDistanceMoved + distanceToMove > NSJEngine.TILE_SIZE)
-                distanceToMove = NSJEngine.TILE_SIZE - totalDistanceMoved;
-            else if (totalDistanceMoved + distanceToMove == NSJEngine.TILE_SIZE)
-                distanceToMove = 0;
-
-
-            if (moveDir == 0)
-                increaseX(-distanceToMove);
-            else if (moveDir == 1)
-                increaseX(distanceToMove);
-            else if (moveDir == 2)
-                increaseY(distanceToMove);
-            else if (moveDir == 3)
-                increaseY(-distanceToMove);
-
-            totalDistanceMoved += distanceToMove;
-
-            if (totalDistanceMoved >= NSJEngine.TILE_SIZE) {
-                moveDir = -1;
-                totalDistanceMoved = 0f;
-                moveWaitTime = 1f + (float)(Math.random()*3);
-                x = Math.round(x);
-                y = Math.round(y);
-            }
-        }
+        super.updateMovement(map);
 
     }
 
