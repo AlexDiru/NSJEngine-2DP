@@ -1,6 +1,7 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public class NSJCharacter extends NSJEntity {
     private float initialJumpVelocity = 2;
     private float jumpDeceleration = 3f;
 
+    protected TextureRegion up, down, left;
+    protected TextureRegion current;
+
     protected NSJCharacter() {
 
     }
@@ -24,6 +28,14 @@ public class NSJCharacter extends NSJEntity {
     public NSJCharacter(Texture texture, Texture painTexture, float x, float y) {
         super(texture, x, y);
         this.painTexture = painTexture;
+    }
+
+
+    public void setTextures(TextureRegion up, TextureRegion down, TextureRegion left) {
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        current = down;
     }
 
     public int getHealth() {
@@ -63,12 +75,6 @@ public class NSJCharacter extends NSJEntity {
         }
     }
 
-    public void renderCharacter(SpriteBatch spriteBatch, int offsetX, int offsetY) {
-        if (showPainTextureTimer > 0)
-            spriteBatch.draw(painTexture, x - offsetX, y - offsetY, 0,0,width, height,1,1,0,0,0,painTexture.getWidth(), painTexture.getHeight(),false,false);
-        else
-            spriteBatch.draw(texture, x - offsetX, y - offsetY, 0,0,width, height,1,1,0,0,0,texture.getWidth(), texture.getHeight(),false,false);
-    }
 
     public boolean canMoveTo(NSJMap map, float destX, float destY) {
         //TODO only works for straight lines in either x or y
@@ -125,5 +131,30 @@ public class NSJCharacter extends NSJEntity {
     public void jump() {
         if (!jumping)
             beginJump = true;
+    }
+
+
+    public void increaseX(float v) {
+        x+=v;
+        if (v > 0) {
+            if (!left.isFlipX())
+                left.flip(true, false);
+            current = left;
+        }
+        else
+        {
+            if (left.isFlipX())
+                left.flip(true, false);
+
+            current = left;
+        }
+    }
+    public void increaseY(float v) {
+        y+=v;
+
+        if (v > 0)
+            current = up;
+        else
+            current = down;
     }
 }

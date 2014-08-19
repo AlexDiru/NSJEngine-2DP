@@ -1,6 +1,7 @@
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Random;
 
@@ -19,10 +20,7 @@ public class NSJAI extends NSJCharacter {
 
     private static final Random random = new Random();
 
-    public static final int Test = 0;
-    private static final Texture TestTexture = new Texture("assets/enemy.png");
-    private static final Texture TestPainTexture = new Texture("assets/enemypain.png");
-
+    public static final int RandomMovement = 0;
 
     private int aiType;
 
@@ -32,15 +30,12 @@ public class NSJAI extends NSJCharacter {
     //Stop jittered movement (same as in NSJEngine so prob refactoring to do to avoid repeated code)
     private int moveDir = -1;
     private float totalDistanceMoved = 0f;
-    private static final float moveDistance = 32f;
 
     public NSJAI(int id, float x, float y) {
-        if (id == Test) {
-            construct(TestTexture, x, y);
-            painTexture = TestPainTexture;
-        }
 
         aiType = AIType_Poke;
+        this.x = x;
+        this.y = y;
     }
 
     public void iterateAITypeUp() {
@@ -69,6 +64,13 @@ public class NSJAI extends NSJCharacter {
         return;
     }
 
+
+    public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {
+
+        float scaleRatio = (width*(z+1))/width;
+        spriteBatch.draw(current, x - offsetX, y - offsetY);
+    }
+
     private void behaveAsPokemon(NSJMap map) {
         if (moveWaitTime > 0)
         {
@@ -82,27 +84,27 @@ public class NSJAI extends NSJCharacter {
 
         if (moveWaitTime <= 0 && moveDir == -1) {
             if (direction == 0)
-                if (canMoveTo(map, x-moveDistance, y))
+                if (canMoveTo(map, x-NSJEngine.TILE_SIZE, y))
                     moveDir = 0;
             if (direction == 1)
-                if (canMoveTo(map, x+moveDistance, y))
+                if (canMoveTo(map, x+NSJEngine.TILE_SIZE, y))
                     moveDir = 1;
             if (direction == 2)
-                if (canMoveTo(map, x, y+moveDistance))
+                if (canMoveTo(map, x, y+NSJEngine.TILE_SIZE))
                     moveDir = 2;
             if (direction == 3)
-                if (canMoveTo(map, x, y-moveDistance))
+                if (canMoveTo(map, x, y-NSJEngine.TILE_SIZE))
                     moveDir = 3;
 
             totalDistanceMoved = 0;
         }
 
-        if (totalDistanceMoved <= moveDistance  && moveDir != -1) {
+        if (totalDistanceMoved <= NSJEngine.TILE_SIZE  && moveDir != -1) {
 
             float distanceToMove = Gdx.graphics.getDeltaTime() * 100;
-            if (totalDistanceMoved + distanceToMove > moveDistance)
-                distanceToMove = moveDistance - totalDistanceMoved;
-            else if (totalDistanceMoved + distanceToMove == moveDistance)
+            if (totalDistanceMoved + distanceToMove > NSJEngine.TILE_SIZE)
+                distanceToMove = NSJEngine.TILE_SIZE - totalDistanceMoved;
+            else if (totalDistanceMoved + distanceToMove == NSJEngine.TILE_SIZE)
                 distanceToMove = 0;
 
 
@@ -117,7 +119,7 @@ public class NSJAI extends NSJCharacter {
 
             totalDistanceMoved += distanceToMove;
 
-            if (totalDistanceMoved >= moveDistance) {
+            if (totalDistanceMoved >= NSJEngine.TILE_SIZE) {
                 moveDir = -1;
                 totalDistanceMoved = 0f;
                 moveWaitTime = 1;

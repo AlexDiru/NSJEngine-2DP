@@ -8,8 +8,6 @@ import java.util.List;
 
 public class NSJPlayer extends NSJCharacter {
 
-    private TextureRegion current;
-    private TextureRegion up, down, left, right;
 
     public NSJPlayer(Texture player, Texture playerPain) {
         super(player,playerPain,32,32);
@@ -18,16 +16,6 @@ public class NSJPlayer extends NSJCharacter {
     }
 
 
-    public void setTextures(TextureRegion up, TextureRegion down, TextureRegion left, TextureRegion right) {
-        this.up = up;
-        this.down = down;
-        this.left = left;
-
-
-        this.right = right;
-
-        current = down;
-    }
 
     public void render(SpriteBatch spriteBatch) {
 
@@ -39,30 +27,6 @@ public class NSJPlayer extends NSJCharacter {
 
     }
 
-
-    public void increaseX(float v) {
-        x+=v;
-        if (v > 0) {
-            if (!right.isFlipX())
-                right.flip(true, false);
-            current = right;
-        }
-        else
-        {
-            if (right.isFlipX())
-                right.flip(true, false);
-
-            current = left;
-        }
-    }
-    public void increaseY(float v) {
-        y+=v;
-
-        if (v > 0)
-            current = up;
-        else
-            current = down;
-    }
 
     public int getHeight() {
         return height;

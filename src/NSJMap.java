@@ -53,23 +53,17 @@ public class NSJMap {
         NSJMapTile floorTile = new NSJMapTile(0,-1,-1, NSJMapTile.MapTileType.OPEN);
         NSJMapTile wallTile = new NSJMapTile(9,-1,-1, NSJMapTile.MapTileType.SOLID);
 
-        player.setTextures(npcs[74+28], npcs[74], npcs[66+6*28-1+8], npcs[66+6*28-1+8]);
+
+        NSJAI testAi = new NSJAI(NSJAI.RandomMovement, 128,128);
+        addEntity(1,testAi);
+
+        testAi.setTextures(npcs[1],npcs[2],npcs[3]);
+        player.setTextures(npcs[102], npcs[74], npcs[241]);
 
 
         this.player = player;
 
 
-        /*for (int x = 0; x < 32 * 10; x += 32)
-            for (int y = 0; y < 32 * 10; y += 32)
-                addEntity(0, new NSJEntity(floor, x, y, 32, 32));
-
-        for (int x = 0; x < 32 * 10; x += 32)
-            for (int y = 0; y < 32 * 10; y += 32)
-                if (x == 0 || y == 0 || x == 32 * 9 || y == 32 * 9) {
-                    NSJEntity e = new NSJEntity(wall, x, y,32,32);
-                    e.setCanPlayerWalkThrough(false);
-                    addEntity(1, e);
-                }*/
 
         layerFromTileMap(0,
                 " , ,1,1,1,1,1,1,1, , \n" +
@@ -124,29 +118,9 @@ public class NSJMap {
     }
 
     public void update() {
-        /*List<NSJEntity> toRemove = new ArrayList<NSJEntity>();
-
-        for (int layer : layerMapTiles.keySet()) {
-            for (int i = 0; i <  layerMapTiles.get(layer).size(); i++) {
-                NSJEntity entity = layerMapTiles.get(layer).get(i);
-
-                if (layerMapTiles.get(layer).get(i) instanceof NSJDynamicEntity) {
-                    NSJDynamicEntity dynamicEntity = (NSJDynamicEntity)entity;
-                    dynamicEntity.update(this);
-                }
-
-                if (entity instanceof NSJCharacter || entity instanceof NSJAI) {
-                    ((NSJCharacter)entity).update(this);
-                }
-
-                if (entity.isDestroyed())
-                    toRemove.add(entity);
-            }
-        }
-
-        for (NSJEntity rem : toRemove) {
-            destroyEntity(rem);
-        }*/
+        for (Integer key : layerMapEntities.keySet())
+            for (NSJEntity entity : layerMapEntities.get(key))
+                entity.update(this);
     }
 
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {

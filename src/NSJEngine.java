@@ -46,15 +46,10 @@ public class NSJEngine implements ApplicationListener {
     public void create() {
         spriteBatch = new SpriteBatch();
 
-        projectile = new Texture("assets/projectile.png");
-        crosshair = new Texture("assets/crosshair.png");
         player =  new NSJPlayer(new Texture("assets/player.png"),new Texture("assets/player.png"));
 
         map = new NSJMap(player);
 
-        enemy = new NSJAI(NSJAI.Test,200,200);
-
-        map.addEntity(1,enemy);
         map.addEntity(1,player);
 
 

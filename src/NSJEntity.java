@@ -59,20 +59,11 @@ public class NSJEntity {
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {
 
         try{
+            if (this instanceof NSJAI)
+                ((NSJAI)this).render(spriteBatch,offsetX,offsetY);
+            //else
+            //    spriteBatch.draw(textureRegion,x,y,NSJEngine.TILE_SIZE, NSJEngine.TILE_SIZE);
 
-        float scaleRatio = (width*(z+1))/width;
-
-        if (isDestroyed())
-            return;
-
-        if (this instanceof NSJPlayer)
-            ((NSJPlayer)this).renderCharacter(spriteBatch, 0,0);
-        else if (this instanceof NSJCharacter)
-            ((NSJCharacter)this).renderCharacter(spriteBatch,offsetX,offsetY);
-        else {
-            spriteBatch.draw(textureRegion,x,y,NSJEngine.TILE_SIZE, NSJEngine.TILE_SIZE);
-
-        }
         } catch (Exception e) {
            e.printStackTrace();
         }
@@ -142,5 +133,11 @@ public class NSJEntity {
     public void roundCoords() {
         x = Math.round(x);
         y = Math.round(y);
+    }
+
+    public void update(NSJMap map) {
+        if (this instanceof NSJAI) {
+            ((NSJAI)this).updateAI(map, null);
+        }
     }
 }
