@@ -189,6 +189,16 @@ public class NSJMap {
             }
         }
 
+        for (int layer : layerMapEntities.keySet()) {
+            for (NSJEntity entity : layerMapEntities.get(layer)) {
+                if (boundingBox == null && entity.getBoundingBox().contains(curX,curY)) {
+                    entities.add(entity);
+                } else if (boundingBox != null && entity.getBoundingBox().overlaps(boundingBox))
+                    entities.add(entity);
+
+            }
+        }
+
         return entities;
 
 

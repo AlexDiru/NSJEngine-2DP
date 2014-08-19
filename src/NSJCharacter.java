@@ -21,6 +21,7 @@ public class NSJCharacter extends NSJEntity {
 
     protected NSJCharacter(float x, float y) {
         super(x,y);
+        setCanPlayerWalkThrough(false);
     }
 
 

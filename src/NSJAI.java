@@ -111,20 +111,20 @@ public class NSJAI extends NSJCharacter {
 
 
             if (moveDir == 0)
-                x -= (distanceToMove);
+                increaseX(-distanceToMove);
             else if (moveDir == 1)
-                x += (distanceToMove);
+                increaseX(distanceToMove);
             else if (moveDir == 2)
-                y += (distanceToMove);
+                increaseY(distanceToMove);
             else if (moveDir == 3)
-                y -= (distanceToMove);
+                increaseY(-distanceToMove);
 
             totalDistanceMoved += distanceToMove;
 
             if (totalDistanceMoved >= NSJEngine.TILE_SIZE) {
                 moveDir = -1;
                 totalDistanceMoved = 0f;
-                moveWaitTime = 0;
+                moveWaitTime = 1f + (float)(Math.random()*3);
                 x = Math.round(x);
                 y = Math.round(y);
             }
