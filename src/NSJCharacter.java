@@ -70,13 +70,7 @@ public class NSJCharacter extends NSJEntity {
     }
 
 
-    public boolean canMoveTo(NSJMap map, float destX, float destY) {
-
-        if (this instanceof NSJAI) {
-            System.out.println("x,y,newx,newy : " + x + "," + y + "," + destX + "," + destY);
-        }
-
-
+    public boolean  canMoveTo(NSJMap map, float destX, float destY) {
 
         if (Math.round(destX) == Math.round(x)) {
             if (Math.round(destY) > Math.round(y)) {
@@ -114,8 +108,10 @@ public class NSJCharacter extends NSJEntity {
             if (entity != this) {
                 if (entity instanceof NSJMapTile) {
                     NSJMapTile.MapTileType type = ((NSJMapTile)entity).getType();
-                    if (type == NSJMapTile.MapTileType.BOULDER || type == NSJMapTile.MapTileType.SOLID)
+                    System.out.println(type);
+                    if (type == NSJMapTile.MapTileType.BOULDER || type == NSJMapTile.MapTileType.SOLID) {
                         return true;
+                    }
                 }
                 else if (!entity.canPlayerWalkThrough) {
                     return true;

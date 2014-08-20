@@ -36,11 +36,15 @@ public class NSJMapTile extends NSJEntity {
         this.x = x;
         this.y = y;
         this.type = type;
-        boundingBox = new Rectangle(x,y,16,16);
+        boundingBox = new Rectangle(x,y,12,12);
     }
 
     public NSJMapTile clone(int newX, int newY) {
         return new NSJMapTile(textureId, newX, newY, type);
+    }
+
+    public Rectangle getBoundingBox() {
+        return boundingBox;
     }
 
     public int getTextureId() {

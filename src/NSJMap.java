@@ -190,6 +190,8 @@ public class NSJMap {
             }
         }
 
+        System.out.println(entities.size());
+
         for (int layer : layerMapEntities.keySet()) {
             for (NSJEntity entity : layerMapEntities.get(layer)) {
                 if (boundingBox == null && entity.getBoundingBox().contains(curX,curY)) {
