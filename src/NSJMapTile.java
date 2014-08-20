@@ -1,4 +1,12 @@
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,12 +17,40 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class NSJMapTile extends NSJEntity {
 
+    //Maps tile ID to tile
+    private static HashMap<Integer, NSJMapTile> tileDatabase;
+
+    public static NSJMapTile getTile(int id) {
+        return tileDatabase.get(id);
+    }
+
+    public static void loadDatabase(String fileName) {
+        try {
+            List<String> lines = FileUtils.readLines(Gdx.files.internal("assets/tiledb.txt").file());
+
+
+            tileDatabase = new HashMap<Integer, NSJMapTile>();
+
+            for (String line : lines) {
+                String[] cells = line.split(",");
+                int id = Integer.parseInt(cells[0]);
+                MapTileType type = MapTileType.valueOf(cells[1]);
+                tileDatabase.put(id, new NSJMapTile(id, -1,-1,type));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public enum MapTileType {
         SOLID,
         OPEN,
         WARP,
         TREE,
         WATER,
+        WILD,
         BOULDER
     }
 

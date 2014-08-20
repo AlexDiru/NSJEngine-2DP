@@ -51,9 +51,9 @@ public class NSJMap {
         textures = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/mapsheet.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,0,0);
         npcs = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/npcsprites.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,2,2);
 
-        NSJMapTile floorTile = new NSJMapTile(0,-1,-1, NSJMapTile.MapTileType.OPEN);
-        NSJMapTile wallTile = new NSJMapTile(9,-1,-1, NSJMapTile.MapTileType.SOLID);
-
+        NSJMapTile floorTile = NSJMapTile.getTile(15);
+        NSJMapTile wallTile = NSJMapTile.getTile(9);
+        NSJMapTile wildTile = NSJMapTile.getTile(17);
 
         NSJAI testAi = new NSJAI(NSJAI.RandomMovement, 128,128);
         addEntity(1,testAi);
@@ -106,7 +106,34 @@ public class NSJMap {
                 " , , , , , , ,1,0,0,0,0,0,0,0,1\n" +
                 " , , , , , , , ,1,1,1,1,1,1,1, \n",
                 new NSJMapTile[] { floorTile, wallTile },NSJEngine.TILE_SIZE);
-
+        layerFromTileMap(1,
+                " , , , , , , , , , , \n" +
+                        " , , , , , ,0,0,0, , \n" +
+                        " , , , , , ,0,0,0, , \n" +
+                        " , , , , , ,0,0,0,0, \n" +
+                        " ,0,0,0,0, ,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " ,0,0,0,0,0,0,0,0,0, \n" +
+                        " , ,0,0,0,0,0,0,0, , \n" +
+                        " , ,0,0,0,0,0,0,0, , \n" +
+                        " , , , , , , , , , , , , , \n" +
+                        " , , ,0, ,0,0,0,0,0,0,0,0, \n" +
+                        " , ,0,0,0, , , , , , , ,0, \n" +
+                        " , ,0,0,0,0,0,0,0,0,0, ,0, \n" +
+                        " , , ,0,0,0, ,0,0,0, ,0,0, \n" +
+                        " , , , ,0,0,0, ,0,0, ,0,0,0, \n" +
+                        " , , , , ,0,0,0,0, ,0,0,0,0,0, \n"+
+                        " , , , , ,0,0,0,0, ,0,0,0,0,0, \n"+
+                        " , , , , , ,0,0,0, ,0,0,0,0,0, \n"+
+                        " , , , , , , ,0,0, ,0,0,0,0,0, \n" +
+                        " , , , , , , , ,0,0,0,0,0,0,0, \n" +
+                        " , , , , , , , , , , , , , , , \n",
+                new NSJMapTile[] { wildTile },NSJEngine.TILE_SIZE);
 
 
     }
@@ -190,7 +217,6 @@ public class NSJMap {
             }
         }
 
-        System.out.println(entities.size());
 
         for (int layer : layerMapEntities.keySet()) {
             for (NSJEntity entity : layerMapEntities.get(layer)) {

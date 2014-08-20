@@ -108,7 +108,6 @@ public class NSJCharacter extends NSJEntity {
             if (entity != this) {
                 if (entity instanceof NSJMapTile) {
                     NSJMapTile.MapTileType type = ((NSJMapTile)entity).getType();
-                    System.out.println(type);
                     if (type == NSJMapTile.MapTileType.BOULDER || type == NSJMapTile.MapTileType.SOLID) {
                         return true;
                     }

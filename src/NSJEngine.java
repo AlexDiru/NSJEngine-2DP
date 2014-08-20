@@ -43,6 +43,10 @@ public class NSJEngine implements ApplicationListener {
 
     @Override
     public void create() {
+
+        //Databases
+        NSJMapTile.loadDatabase("assets/tiledb.txt");
+
         spriteBatch = new SpriteBatch();
 
         player =  new NSJPlayer(64,64);
