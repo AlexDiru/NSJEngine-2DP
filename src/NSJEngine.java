@@ -53,7 +53,6 @@ public class NSJEngine implements ApplicationListener {
 
         map = new NSJMap(player);
 
-        map.addEntity(1,player);
 
 
         NSJGUI.load();

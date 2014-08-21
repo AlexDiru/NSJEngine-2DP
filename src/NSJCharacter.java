@@ -183,8 +183,11 @@ public class NSJCharacter extends NSJEntity {
 
                 //Check warps
                 Warp warp = map.getWarpAt((int)x,(int)y);
-                if (warp != null)
+                if (warp != null) {
                     System.out.println("Warping to " + warp.getMapDest() + " at (" + warp.getWarpDestX() + ", " + warp.getWarpDestY() + ") [" + warp.hashCode() + "]");
+                    map.clear();
+                    map.loadMap(warp.getMapDest());
+                }
 
             }
         }

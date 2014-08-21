@@ -32,6 +32,10 @@ public class NSJMap {
     private TextureRegion[] npcs; //width = 24
 
     public void loadMap(String name) {
+
+
+        addEntity(1,player);
+
         //Rewrite file system to make like WADs for quicker searching (pointers to other areas in the file)
         //Maybe use ZLIB compression
 
@@ -99,17 +103,20 @@ public class NSJMap {
 
                     layerFromTileMap(layer, currentLayer);
 
-
-                    while (lines.get(i).split(":")[0].equals("warp")) {
-                        System.out.println("Added Warp");
-                        String warpCoords = lines.get(i).split(":")[1];
-                        int warpX = Integer.parseInt(warpCoords.split(">")[0].split(",")[0]);
-                        int warpY = Integer.parseInt(warpCoords.split(">")[0].split(",")[1]);
-                        String mapDest = warpCoords.split(">")[1].split(",")[0];
-                        int warpDestX  =Integer.parseInt(warpCoords.split(">")[1].split(",")[1]);
-                        int warpDestY  =Integer.parseInt(warpCoords.split(">")[1].split(",")[2]);
-                        addWarp(warpX, warpY, mapDest, warpDestX, warpDestY);
-                        i++;
+                    try {
+                        while (lines.get(i).split(":")[0].equals("warp")) {
+                            System.out.println("Added Warp");
+                            String warpCoords = lines.get(i).split(":")[1];
+                            int warpX = Integer.parseInt(warpCoords.split(">")[0].split(",")[0]);
+                            int warpY = Integer.parseInt(warpCoords.split(">")[0].split(",")[1]);
+                            String mapDest = warpCoords.split(">")[1].split(",")[0];
+                            int warpDestX  =Integer.parseInt(warpCoords.split(">")[1].split(",")[1]);
+                            int warpDestY  =Integer.parseInt(warpCoords.split(">")[1].split(",")[2]);
+                            addWarp(warpX, warpY, mapDest, warpDestX, warpDestY);
+                            i++;
+                        }
+                    }catch (IndexOutOfBoundsException e) {
+                        System.out.println("No warps found");
                     }
 
                     if (i >= lines.size())
@@ -137,8 +144,13 @@ public class NSJMap {
             String[] cols = row.split(",");
             for (String col : cols) {
                 if (!col.equals(" ")) {
-                    int id = Integer.parseInt(col.replace(" ", ""));
-                    addEntity(layerNum, NSJMapTile.getTile(id).clone(x, y));
+                    String idStr = col.replace(" ", "");
+
+                    //Ignore blank tile
+                    if (!idStr.isEmpty()) {
+                        int id = Integer.parseInt(col.replace(" ", ""));
+                        addEntity(layerNum, NSJMapTile.getTile(id).clone(x, y));
+                    }
 
                 }
                 x += NSJEngine.TILE_SIZE;
@@ -172,6 +184,7 @@ public class NSJMap {
 
     public NSJMap(NSJPlayer player) {
 
+        this.player = player;
         textures = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/mapsheet.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,0,0);
         npcs = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/npcsprites.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,2,2);
 
@@ -194,8 +207,6 @@ public class NSJMap {
         testAi5.setTextures(npcs[1],npcs[2],npcs[3]);
         player.setTextures(npcs[102], npcs[74], npcs[241]);
 
-
-        this.player = player;
 
 
 
@@ -307,5 +318,11 @@ public class NSJMap {
     }
     public NSJEntity getPlayer() {
         return player;
+    }
+
+    public void clear() {
+        layerMapEntities.clear();
+        layerMapTiles.clear();
+        warps.clear();
     }
 }
