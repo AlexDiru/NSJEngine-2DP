@@ -180,6 +180,12 @@ public class NSJCharacter extends NSJEntity {
                 moveWaitTime = 1f + (float)(Math.random()*3);
                 x = actualX;
                 y = actualY;
+
+                //Check warps
+                Warp warp = map.getWarpAt((int)x,(int)y);
+                if (warp != null)
+                    System.out.println("Warping to " + warp.getMapDest() + " at (" + warp.getWarpDestX() + ", " + warp.getWarpDestY() + ") [" + warp.hashCode() + "]");
+
             }
         }
     }

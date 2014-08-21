@@ -21,7 +21,10 @@ public class NSJMapTile extends NSJEntity {
     private static HashMap<Integer, NSJMapTile> tileDatabase;
 
     public static NSJMapTile getTile(int id) {
-        return tileDatabase.get(id);
+        NSJMapTile tile = tileDatabase.get(id);
+        if (tile == null)
+            System.out.println("Tile " + id + " not found");
+        return tile;
     }
 
     public static void loadDatabase(String fileName) {

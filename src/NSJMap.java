@@ -1,8 +1,11 @@
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import org.apache.commons.io.FileUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +13,13 @@ import java.util.HashMap;
 
 public class NSJMap {
 
+    private static String MAP_DATABASE = "assets/mapdatabase.txt";
+
     //Maps layer to objects on that layer
     public HashMap<Integer, List<NSJMapTile>> layerMapTiles = new HashMap<Integer, List<NSJMapTile>>();
     public HashMap<Integer, List<NSJEntity>> layerMapEntities = new HashMap<Integer, List<NSJEntity>>();
+
+    private List<Warp> warps = new ArrayList<Warp>();
 
 
     private NSJEntity player;
@@ -23,6 +30,123 @@ public class NSJMap {
     //Tileset Map
     private TextureRegion[] textures;
     private TextureRegion[] npcs; //width = 24
+
+    public void loadMap(String name) {
+        //Rewrite file system to make like WADs for quicker searching (pointers to other areas in the file)
+        //Maybe use ZLIB compression
+
+        List<String> lines;
+
+        try {
+            lines = FileUtils.readLines(Gdx.files.internal(MAP_DATABASE).file());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        for (int i = 0; i < lines.size(); i++) {
+            String[] cells = lines.get(i).split(":");
+
+            if (cells.length != 2)
+                continue;
+
+            if (cells[0].equals("map") && cells[1].equals(name)) {
+
+                System.out.println("Found Map: " + name);
+                i++;
+
+                //Until next map found or EOF
+                while (!lines.get(i).split(",")[0].equals("map")) {
+                    int layer;
+
+                    try {
+                        layer = Integer.parseInt(lines.get(i).split(":")[1]);
+                    } catch (Exception e) {
+                        System.out.println("Error: Layer Declaration Not Found");
+                        return;
+                    }
+
+                    System.out.println("Found Layer: " + layer);
+
+                    String currentLayer = "";
+
+                    i++;
+                    if (i >= lines.size())
+                        return;
+
+                    //Until next layer found
+                    while (true) {
+
+                        currentLayer += lines.get(i) + "\n";
+
+                        i++;
+
+                        if (i >= lines.size())
+                            break;
+
+                        if (lines.get(i).split(":")[0].equals("layer"))
+                            break;
+
+                        if (lines.get(i).split(":")[0].equals("warp")) {
+                            break;
+                        }
+
+                        //Onto the next map which means the one we wanted has been loaded
+                        if (lines.get(i).split(":")[0].equals("map")) {
+                            return;
+                        }
+                    }
+
+                    layerFromTileMap(layer, currentLayer);
+
+
+                    while (lines.get(i).split(":")[0].equals("warp")) {
+                        System.out.println("Added Warp");
+                        String warpCoords = lines.get(i).split(":")[1];
+                        int warpX = Integer.parseInt(warpCoords.split(">")[0].split(",")[0]);
+                        int warpY = Integer.parseInt(warpCoords.split(">")[0].split(",")[1]);
+                        String mapDest = warpCoords.split(">")[1].split(",")[0];
+                        int warpDestX  =Integer.parseInt(warpCoords.split(">")[1].split(",")[1]);
+                        int warpDestY  =Integer.parseInt(warpCoords.split(">")[1].split(",")[2]);
+                        addWarp(warpX, warpY, mapDest, warpDestX, warpDestY);
+                        i++;
+                    }
+
+                    if (i >= lines.size())
+                        break;
+
+                }
+
+                return;
+            }
+        }
+
+    }
+
+    private void addWarp(int warpX, int warpY, String mapDest, int warpDestX, int warpDestY) {
+        warps.add(new Warp(warpX, warpY, mapDest,  warpDestX,warpDestY));
+    }
+
+    private void layerFromTileMap(int layerNum, String tileMap) {
+        String[] rows = tileMap.split("\n");
+
+        int y = 0;
+        int x = 0;
+
+        for (String row : rows) {
+            String[] cols = row.split(",");
+            for (String col : cols) {
+                if (!col.equals(" ")) {
+                    int id = Integer.parseInt(col.replace(" ", ""));
+                    addEntity(layerNum, NSJMapTile.getTile(id).clone(x, y));
+
+                }
+                x += NSJEngine.TILE_SIZE;
+            }
+            x = 0;
+            y += NSJEngine.TILE_SIZE;
+        }
+    }
 
 
     private void layerFromTileMap(int layerNum, String tileMap, NSJMapTile[] entityEncoding, int tileSize) {
@@ -51,9 +175,6 @@ public class NSJMap {
         textures = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/mapsheet.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,0,0);
         npcs = NSJSpriteSheet.spriteSheetToTextureArray(new TextureRegion(new Texture("assets/npcsprites.png")),NSJEngine.TILE_SIZE,NSJEngine.TILE_SIZE,2,2);
 
-        NSJMapTile floorTile = NSJMapTile.getTile(15);
-        NSJMapTile wallTile = NSJMapTile.getTile(9);
-        NSJMapTile wildTile = NSJMapTile.getTile(17);
 
         NSJAI testAi = new NSJAI(NSJAI.RandomMovement, 128,128);
         addEntity(1,testAi);
@@ -78,62 +199,7 @@ public class NSJMap {
 
 
 
-        layerFromTileMap(0,
-                " , ,1,1,1,1,1,1,1, , \n" +
-                " ,1,0,0,0,0,0,0,0,1, \n" +
-                " ,1,0,0,0,0,0,0,0,1, \n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                "1,0,0,0,0,0,0,0,0,0,1\n" +
-                " ,1,0,0,0,0,0,0,0,1, \n" +
-                " ,1,0,0,0,0,0,0,0,1, \n" +
-                " , ,1,1,1,0,1,1,1,1,1,1,1, \n" +
-                " , ,1,0,1,0,0,0,0,0,0,0,0,1\n" +
-                " ,1,0,0,0,1,1,1,1,1,1,1,0,1\n" +
-                " ,1,0,0,0,0,0,0,0,0,0,1,0,1\n" +
-                " , ,1,0,0,0,1,0,0,0,1,0,0,1\n" +
-                " , , ,1,0,0,0,1,0,0,1,0,0,0,1\n" +
-                " , , , ,1,0,0,0,0,1,0,0,0,0,0,1\n"+
-                " , , , ,1,0,0,0,0,1,0,0,0,0,0,1\n"+
-                " , , , , ,1,0,0,0,1,0,0,0,0,0,1\n"+
-                " , , , , , ,1,0,0,1,0,0,0,0,0,1\n" +
-                " , , , , , , ,1,0,0,0,0,0,0,0,1\n" +
-                " , , , , , , , ,1,1,1,1,1,1,1, \n",
-                new NSJMapTile[] { floorTile, wallTile },NSJEngine.TILE_SIZE);
-        layerFromTileMap(1,
-                " , , , , , , , , , , \n" +
-                        " , , , , , ,0,0,0, , \n" +
-                        " , , , , , ,0,0,0, , \n" +
-                        " , , , , , ,0,0,0,0, \n" +
-                        " ,0,0,0,0, ,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " ,0,0,0,0,0,0,0,0,0, \n" +
-                        " , ,0,0,0,0,0,0,0, , \n" +
-                        " , ,0,0,0,0,0,0,0, , \n" +
-                        " , , , , , , , , , , , , , \n" +
-                        " , , ,0, ,0,0,0,0,0,0,0,0, \n" +
-                        " , ,0,0,0, , , , , , , ,0, \n" +
-                        " , ,0,0,0,0,0,0,0,0,0, ,0, \n" +
-                        " , , ,0,0,0, ,0,0,0, ,0,0, \n" +
-                        " , , , ,0,0,0, ,0,0, ,0,0,0, \n" +
-                        " , , , , ,0,0,0,0, ,0,0,0,0,0, \n"+
-                        " , , , , ,0,0,0,0, ,0,0,0,0,0, \n"+
-                        " , , , , , ,0,0,0, ,0,0,0,0,0, \n"+
-                        " , , , , , , ,0,0, ,0,0,0,0,0, \n" +
-                        " , , , , , , , ,0,0,0,0,0,0,0, \n" +
-                        " , , , , , , , , , , , , , , , \n",
-                new NSJMapTile[] { wildTile },NSJEngine.TILE_SIZE);
+        loadMap("celedon");
 
 
     }
@@ -161,6 +227,13 @@ public class NSJMap {
         for (Integer key : layerMapEntities.keySet())
             for (NSJEntity entity : layerMapEntities.get(key))
                 entity.update(this);
+    }
+
+    public Warp getWarpAt(int x, int y) {
+        for (Warp warp : warps)
+            if (warp.isAt(x,y))
+                return warp;
+        return null;
     }
 
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {

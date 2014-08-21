@@ -49,7 +49,7 @@ public class NSJEngine implements ApplicationListener {
 
         spriteBatch = new SpriteBatch();
 
-        player =  new NSJPlayer(64,64);
+        player =  new NSJPlayer(48,64);
 
         map = new NSJMap(player);
 
