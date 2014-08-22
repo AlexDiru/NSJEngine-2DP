@@ -63,7 +63,7 @@ public class NSJAI extends NSJCharacter {
     public void render(SpriteBatch spriteBatch, int offsetX, int offsetY) {
 
         float scaleRatio = (width*(z+1))/width;
-        spriteBatch.draw(current, x - offsetX, y - offsetY);
+        spriteBatch.draw(getCurrentTexture(), x - offsetX, y - offsetY);
     }
 
     private void behaveAsPokemon(NSJMap map) {

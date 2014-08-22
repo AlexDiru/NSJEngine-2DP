@@ -18,7 +18,7 @@ public class NSJPlayer extends NSJCharacter {
     public void render(SpriteBatch spriteBatch) {
 
         float scaleRatio = (width*(z+1))/width;
-        spriteBatch.draw(current, (Gdx.graphics.getWidth() - width * scaleRatio) /2, (Gdx.graphics.getHeight() - height * scaleRatio) /2);// 0,0,width, height,z+1,z+1,0,0,0,texture.getWidth(), texture.getHeight(),false,false);
+        spriteBatch.draw(getCurrentTexture(), (Gdx.graphics.getWidth() - width * scaleRatio) /2, (Gdx.graphics.getHeight() - height * scaleRatio) /2);// 0,0,width, height,z+1,z+1,0,0,0,texture.getWidth(), texture.getHeight(),false,false);
     }
 
     public void renderOnGUI(SpriteBatch spriteBatch) {

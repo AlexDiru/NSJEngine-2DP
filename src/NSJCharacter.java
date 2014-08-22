@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NSJCharacter extends NSJEntity {
@@ -17,14 +18,13 @@ public class NSJCharacter extends NSJEntity {
     private float initialJumpVelocity = 2;
     private float jumpDeceleration = 3f;
 
-    protected TextureRegion up, down, left;
-    protected TextureRegion current;
+    protected List<TextureRegion> up, down, left;
+    protected List<TextureRegion> current;
+    protected int currentAnimation = 0;
 
     protected int moveDir = -1;
     protected float moveWaitTime = 1f;
     protected float totalDistanceMoved = 0f;
-    protected int movementDestinationX;
-    protected int movementDestinationY;
 
     protected NSJCharacter(float x, float y) {
         super(x,y);
@@ -33,14 +33,35 @@ public class NSJCharacter extends NSJEntity {
 
 
     public void setTextures(TextureRegion up, TextureRegion down, TextureRegion left) {
-        this.up = up;
-        this.down = down;
-        this.left = left;
-        current = down;
+        this.up = new ArrayList<TextureRegion>();
+        this.down = new ArrayList<TextureRegion>();
+        this.left = new ArrayList<TextureRegion>();
+        this.up.add(up);
+        this.down.add(down);
+        this.left.add(left);
+        current = this.down;
+    }
+
+    public void setTextures(TextureRegion up1, TextureRegion up2, TextureRegion down1, TextureRegion down2, TextureRegion left1, TextureRegion left2) {
+        this.up = new ArrayList<TextureRegion>();
+        this.down = new ArrayList<TextureRegion>();
+        this.left = new ArrayList<TextureRegion>();
+        this.up.add(up1);
+        this.up.add(up2);
+        this.down.add(down1);
+        this.down.add(down2);
+        this.left.add(left1);
+        this.left.add(left2);
+        current = this.down;
     }
 
     public int getHealth() {
         return health;
+    }
+
+
+    protected TextureRegion getCurrentTexture() {
+        return current.get(currentAnimation);
     }
 
 
@@ -129,14 +150,14 @@ public class NSJCharacter extends NSJEntity {
     public void increaseX(float v) {
         x+=v;
         if (v > 0) {
-            if (!left.isFlipX())
-                left.flip(true, false);
+            if (!left.get(currentAnimation).isFlipX())
+                left.get(currentAnimation).flip(true, false);
             current = left;
         }
         else
         {
-            if (left.isFlipX())
-                left.flip(true, false);
+            if (left.get(currentAnimation).isFlipX())
+                left.get(currentAnimation).flip(true, false);
 
             current = left;
         }
@@ -174,7 +195,13 @@ public class NSJCharacter extends NSJEntity {
 
             totalDistanceMoved += distanceToMove;
 
+            if (totalDistanceMoved < 3.5f || totalDistanceMoved > 13.5f)
+                currentAnimation = 0;
+            else
+                currentAnimation = current.size() - 1;
+
             if (totalDistanceMoved >= NSJEngine.TILE_SIZE) {
+                currentAnimation = 0; //Return to default animation
                 moveDir = -1;
                 totalDistanceMoved = 0f;
                 moveWaitTime = 1f + (float)(Math.random()*3);
@@ -191,5 +218,25 @@ public class NSJCharacter extends NSJEntity {
 
             }
         }
+    }
+
+    public void faceDown() {
+        current = down;
+    }
+
+    public void faceUp() {
+        current = up;
+    }
+
+    public void faceLeft() {
+        if (left.get(currentAnimation).isFlipX())
+            left.get(currentAnimation).flip(true, false);
+        current = left;
+    }
+
+    public void faceRight() {
+        if (!left.get(currentAnimation).isFlipX())
+            left.get(currentAnimation).flip(true, false);
+        current = left;
     }
 }

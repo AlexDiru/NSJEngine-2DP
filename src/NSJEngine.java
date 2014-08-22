@@ -68,6 +68,7 @@ public class NSJEngine implements ApplicationListener {
 
         if (player.moveDir == -1) {
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                player.faceLeft();
                 if (player.canMoveTo(map, player.getX()-TILE_SIZE, player.getY())) {
                     player.moveDir = 0;
                     player.actualX = player.getX() - TILE_SIZE;
@@ -75,6 +76,7 @@ public class NSJEngine implements ApplicationListener {
                 }
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                player.faceRight();
                 if (player.canMoveTo(map, player.getX()+TILE_SIZE, player.getY())) {
                     player.moveDir = 1;
                     player.actualX = player.getX() + TILE_SIZE;
@@ -82,6 +84,7 @@ public class NSJEngine implements ApplicationListener {
                 }
             }
             if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                player.faceUp();
                 if (player.canMoveTo(map, player.getX(), player.getY()+TILE_SIZE)) {
                     player.moveDir = 2;
                     player.actualX = player.getX();
@@ -89,6 +92,7 @@ public class NSJEngine implements ApplicationListener {
                 }
             }
             if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                player.faceDown();
                 if (player.canMoveTo(map, player.getX(), player.getY()-TILE_SIZE)) {
                     player.moveDir = 3;
                     player.actualX = player.getX();

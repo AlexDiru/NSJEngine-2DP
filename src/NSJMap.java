@@ -205,7 +205,7 @@ public class NSJMap {
         testAi3.setTextures(npcs[1],npcs[2],npcs[3]);
         testAi4.setTextures(npcs[1],npcs[2],npcs[3]);
         testAi5.setTextures(npcs[1],npcs[2],npcs[3]);
-        player.setTextures(npcs[102], npcs[74], npcs[241]);
+        player.setTextures(npcs[102], npcs[102+174-7+24+4], npcs[74], npcs[102+174-7], npcs[241], npcs[102+174-7+24+4+24+4]);
 
 
 
