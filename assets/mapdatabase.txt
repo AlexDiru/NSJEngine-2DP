@@ -18,6 +18,7 @@ layer:1
 354,   ,   ,   ,   ,   ,   ,
    , 10,258
 warp:7,6>vermillion,1,1
+dialog:::3,2:::Alex is playing the SNES! ...Okay, time to go!
 map:celedon
 layer:0
  9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.awt.*;
 import java.util.Random;
 
 /**
@@ -101,6 +102,12 @@ public class NSJEngine implements ApplicationListener {
             }
 
             totalDistanceMoved = 0;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+
+            NSJPair<Float, Float> target = player.getInfrontOf();
+            map.playerInteract(target.getLeft(), target.getRight());
         }
 
         /*if (totalDistanceMoved <= TILE_SIZE + 1 && player.moveDir != -1) {

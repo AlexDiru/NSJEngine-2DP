@@ -20,7 +20,9 @@ public class NSJMap {
     public HashMap<Integer, List<NSJEntity>> layerMapEntities = new HashMap<Integer, List<NSJEntity>>();
 
     private List<Warp> warps = new ArrayList<Warp>();
+    private List<Dialog> dialogs = new ArrayList<Dialog>();
 
+    private DialogRenderer dialogRenderer = new DialogRenderer();
 
     private NSJEntity player;
 
@@ -95,6 +97,10 @@ public class NSJMap {
                             break;
                         }
 
+                        if (lines.get(i).split(":::")[0].equals("dialog")) {
+                            break;
+                        }
+
                         //Onto the next map which means the one we wanted has been loaded
                         if (lines.get(i).split(":")[0].equals("map")) {
                             return;
@@ -117,6 +123,19 @@ public class NSJMap {
                         }
                     }catch (IndexOutOfBoundsException e) {
                         System.out.println("No warps found");
+                    }
+
+                    try {
+                        while (lines.get(i).split(":::")[0].equals("dialog")) {
+                            System.out.println("Added Dialog");
+                            int dX = Integer.parseInt(lines.get(i).split(":::")[1].split(",")[0]);
+                            int dY = Integer.parseInt(lines.get(i).split(":::")[1].split(",")[1]);
+                            String dText = lines.get(i).split(":::")[2];
+                            dialogs.add(new Dialog(dX, dY, dText));
+                            i++;
+                        }
+                    }catch (IndexOutOfBoundsException e) {
+                        System.out.println("No dialogs found");
                     }
 
                     if (i >= lines.size())
@@ -238,6 +257,8 @@ public class NSJMap {
         for (Integer key : layerMapEntities.keySet())
             for (NSJEntity entity : layerMapEntities.get(key))
                 entity.update(this);
+
+        dialogRenderer.updateDialogs();
     }
 
     public Warp getWarpAt(int x, int y) {
@@ -283,6 +304,8 @@ public class NSJMap {
             }
         }
 
+        dialogRenderer.renderDialogs(spriteBatch);
+
     }
 
     public List<NSJEntity> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {
@@ -324,5 +347,15 @@ public class NSJMap {
         layerMapEntities.clear();
         layerMapTiles.clear();
         warps.clear();
+        dialogs.clear();
+    }
+
+    public void playerInteract(float x, float y) {
+
+        for (Dialog dialog : dialogs) {
+            if (dialog.getX() == x && dialog.getY() == y) {
+                dialogRenderer.addDialog(dialog.getText());
+            }
+        }
     }
 }

@@ -21,6 +21,7 @@ public class NSJCharacter extends NSJEntity {
     protected List<TextureRegion> up, down, left;
     protected List<TextureRegion> current;
     protected int currentAnimation = 0;
+    private int facing; //up, down, left, right
 
     protected int moveDir = -1;
     protected float moveWaitTime = 1f;
@@ -29,6 +30,7 @@ public class NSJCharacter extends NSJEntity {
     protected NSJCharacter(float x, float y) {
         super(x,y);
         setCanPlayerWalkThrough(false);
+        facing = 0;
     }
 
 
@@ -222,21 +224,48 @@ public class NSJCharacter extends NSJEntity {
 
     public void faceDown() {
         current = down;
+        facing = 1;
     }
 
     public void faceUp() {
         current = up;
+        facing = 0;
     }
 
     public void faceLeft() {
         if (left.get(currentAnimation).isFlipX())
             left.get(currentAnimation).flip(true, false);
         current = left;
+        facing = 2;
     }
 
     public void faceRight() {
         if (!left.get(currentAnimation).isFlipX())
             left.get(currentAnimation).flip(true, false);
         current = left;
+        facing = 3;
+    }
+
+    public int getFacing() {
+        return facing;
+    }
+
+    public NSJPair<Float, Float> getInfrontOf() {
+        float iX = actualX, iY = actualY;
+
+        if (facing == 0)
+            //Up
+            iY += NSJEngine.TILE_SIZE;
+        else if (facing == 1)
+            //Down
+            iY -= NSJEngine.TILE_SIZE;
+        else if (facing == 2)
+            //Left
+            iX -= NSJEngine.TILE_SIZE;
+        else if (facing == 3)
+            //Right
+            iX += NSJEngine.TILE_SIZE;
+
+        return new NSJPair<Float, Float>(iX, iY);
     }
 }
