@@ -95,30 +95,34 @@ public class NSJCharacter extends NSJEntity {
 
     public boolean  canMoveTo(NSJMap map, float destX, float destY) {
 
+
+        float curY = destY;
+        float curX = destX;
+
         if (Math.round(destX) == Math.round(x)) {
             if (Math.round(destY) > Math.round(y)) {
-                for (int curY = Math.round(y); curY <= Math.round(destY); curY += 1){
+                //for (int curY = Math.round(y); curY <= Math.round(destY); curY += 1){
                     if (solidFound(map.getEntitiesAtPosition(null, destX, curY)))
                         return false;
-                }
+                //}
             } else {
-                for (int curY = Math.round(y); curY >= Math.round(destY); curY -= 1){
+                //for (int curY = Math.round(y); curY >= Math.round(destY); curY -= 1){
                     if (solidFound(map.getEntitiesAtPosition(null, destX, curY)))
                         return false;
-                }
+                //}
             }
         }
         else if (Math.round(destY) == Math.round(y)) {
             if (Math.round(destX) > Math.round(x)) {
-                for (int curX = Math.round(x); curX <= Math.round(destX); curX += 1){
+                //for (int curX = Math.round(x); curX <= Math.round(destX); curX += 1){
                     if (solidFound(map.getEntitiesAtPosition(null, curX, destY)))
                         return false;
-                }
+                //}
             } else {
-                for (float curX = Math.round(x); curX >= Math.round(destX); curX -= 1){
+                //for (float curX = Math.round(x); curX >= Math.round(destX); curX -= 1){
                     if (solidFound(map.getEntitiesAtPosition(null, curX, destY)))
                         return false;
-                }
+                //}
             }
         }
 
@@ -127,6 +131,7 @@ public class NSJCharacter extends NSJEntity {
     }
 
     private boolean solidFound(List<NSJEntity> entitiesAtPosition) {
+
         for (NSJEntity entity : entitiesAtPosition) {
             if (entity != this) {
                 if (entity instanceof NSJMapTile) {
@@ -140,6 +145,11 @@ public class NSJCharacter extends NSJEntity {
                 }
             }
         }
+
+        //No tiles found = outside of map
+        if (entitiesAtPosition.size() == 0)
+            return true;
+
         return false;
     }
 

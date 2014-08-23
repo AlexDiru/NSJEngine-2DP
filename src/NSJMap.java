@@ -310,8 +310,6 @@ public class NSJMap {
 
     public List<NSJEntity> getEntitiesAtPosition(Rectangle boundingBox, float curX, float curY) {
 
-
-
         //TODO speed up using octrees or something
         List<NSJEntity> entities = new ArrayList<NSJEntity>();
 
